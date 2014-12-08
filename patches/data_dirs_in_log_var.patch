@@ -1,0 +1,26 @@
+diff --git a/config/server.properties b/config/server.properties
+index b0e4496..5101af3 100644
+--- a/config/server.properties
++++ b/config/server.properties
+@@ -55,7 +55,7 @@ socket.request.max.bytes=104857600
+ ############################# Log Basics #############################
+ 
+ # A comma seperated list of directories under which to store log files
+-log.dirs=/tmp/kafka-logs
++log.dirs=/var/log/kafka
+ 
+ # The default number of log partitions per topic. More partitions allow greater
+ # parallelism for consumption, but this will also result in more files across
+diff --git a/config/zookeeper.properties b/config/zookeeper.properties
+index 74cbf90..1a4eb06 100644
+--- a/config/zookeeper.properties
++++ b/config/zookeeper.properties
+@@ -13,7 +13,7 @@
+ # See the License for the specific language governing permissions and
+ # limitations under the License.
+ # the directory where the snapshot is stored.
+-dataDir=/tmp/zookeeper
++dataDir=/var/log/zookeeper
+ # the port at which the clients will connect
+ clientPort=2181
+ # disable the per-ip limit on the number of connections since this is a non-production config
