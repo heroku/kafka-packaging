@@ -67,10 +67,17 @@ endif
 
 # Install directories
 ifndef DESTDIR
-DESTDIR=$(CURDIR)/$(PACKAGE_NAME)
+DESTDIR=$(CURDIR)/
 endif
+# For platform-specific packaging you'll want to override this to a normal
+# PREFIX like /usr or /usr/local. Using the PACKAGE_NAME here makes the default
+# zip/tgz files use a format like:
+#   kafka-version-scalaversion/
+#     bin/
+#     etc/
+#     share/kafka/
 ifndef PREFIX
-PREFIX=/usr/local
+PREFIX=$(PACKAGE_NAME)
 endif
 
 export VERSION
@@ -83,8 +90,8 @@ all: install
 
 
 archive: install
-	cd $(DESTDIR) && tar -czf $(CURDIR)/$(PACKAGE_NAME).tar.gz .
-	cd $(DESTDIR) && zip -r $(CURDIR)/$(PACKAGE_NAME).zip .
+	cd $(DESTDIR) && tar -czf $(CURDIR)/$(PACKAGE_NAME).tar.gz $(PREFIX)
+	cd $(DESTDIR) && zip -r $(CURDIR)/$(PACKAGE_NAME).zip $(PREFIX)
 
 gradle: gradle-$(GRADLE_VERSION)
 
