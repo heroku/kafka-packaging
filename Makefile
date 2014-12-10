@@ -57,7 +57,7 @@ SCALA_VERSION=$(shell grep ext[.]scalaVersion scala.gradle | awk -F\' '{ print $
 endif
 SCALA_VERSION_UNDERSCORE=$(subst .,_,$(SCALA_VERSION))
 
-PACKAGE_NAME=kafka-$(VERSION)-$(SCALA_VERSION)
+export PACKAGE_NAME=kafka-$(VERSION)-$(SCALA_VERSION)
 
 
 # Defaults that are likely to vary by platform. These are cleanly separated so
@@ -65,9 +65,9 @@ PACKAGE_NAME=kafka-$(VERSION)-$(SCALA_VERSION)
 # when the values aren't overridden by the script invoking the Makefile
 DEFAULT_APPLY_PATCHES=yes
 DEFAULT_DESTDIR=$(CURDIR)/
-DEFAULT_PREFIX=$(PACKAGE_NAME)
-DEFAULT_SYSCONFDIR=PREFIX/etc/kafka
-DEFAULT_INCLUDE_WINDOWS_BIN=yes
+DEFAULT_PREFIX=/usr
+DEFAULT_SYSCONFDIR=/etc/kafka
+DEFAULT_INCLUDE_WINDOWS_BIN=no
 
 
 # Whether we should apply patches. This only makes sense for alternate packaging
@@ -140,5 +140,53 @@ clean:
 	rm -rf $(CURDIR)/gradle-*
 	rm -rf $(DESTDIR)$(PREFIX)
 	rm -rf $(CURDIR)/$(PACKAGE_NAME)*
+	rm -rf kafka-$(RPM_VERSION)*rpm
+	rm -rf RPM_BUILDING
 
 .PHONY: clean install
+
+
+
+export RPM_VERSION=$(shell echo $(VERSION) | sed -e 's/-alpha[0-9]*//' -e 's/-beta[0-9]*//' -e 's/-rc[0-9]*//')
+# Get any -alpha, -beta, -rc piece that we need to put into the Release part of
+# the version since RPM versions don't support non-numeric
+# characters. Ultimately, for something like 0.8.2-beta, we want to end up with
+# Version=0.8.2 Release=0.X.beta
+# where X is the RPM release # of 0.8.2-beta (the prefix 0. forces this to be
+# considered earlier than any 0.8.2 final releases since those will start with
+# Version=0.8.2 Release=1)
+export RPM_RELEASE_POSTFIX=$(subst -,,$(subst $(RPM_VERSION),,$(VERSION)))
+
+rpm: RPM_BUILDING/SOURCES/kafka-$(SCALA_VERSION)-$(RPM_VERSION).tar.gz
+	echo "Building the rpm"
+	rpmbuild --define="_topdir `pwd`/RPM_BUILDING" -tb $<
+	find RPM_BUILDING/{,S}RPMS/ -type f | xargs -n1 -iXXX mv XXX .
+	echo
+	echo "================================================="
+	echo "The rpms have been created and can be found here:"
+	@ls -laF kafka*rpm
+	echo "================================================="
+
+# Unfortunately, because of version naming issues and the way rpmbuild expects
+# the paths in the tar file to be named, we need to rearchive the package. So
+# instead of depending on archive, this target just uses the unarchived,
+# installed version to generate a new archive. Note that we always regenerate
+# the symlink because the RPM_VERSION doesn't include all the version info -- it
+# can leave of things like -beta, -rc1, etc.
+RPM_BUILDING/SOURCES/kafka-$(SCALA_VERSION)-$(RPM_VERSION).tar.gz: rpm-build-area install kafka.spec.in RELEASE_$(SCALA_VERSION)_$(RPM_VERSION)_$(RPM_RELEASE_POSTFIX)
+	rm -rf kafka-$(SCALA_VERSION)-$(RPM_VERSION)
+	mkdir kafka-$(SCALA_VERSION)-$(RPM_VERSION)
+	cp -R $(DESTDIR)$(PREFIX) kafka-$(SCALA_VERSION)-$(RPM_VERSION)
+	./create_spec.sh kafka.spec.in kafka-$(SCALA_VERSION)-$(RPM_VERSION)/kafka.spec
+	rm -f $@ && cd $(DESTDIR) && tar -czf $@ kafka-$(SCALA_VERSION)-$(RPM_VERSION)
+
+rpm-build-area: RPM_BUILDING/BUILD RPM_BUILDING/RPMS RPM_BUILDING/SOURCES RPM_BUILDING/SPECS RPM_BUILDING/SRPMS
+
+RPM_BUILDING/%:
+	mkdir -p $@
+
+kafka.spec:
+	./create_spec.sh kafka.spec.in kafka.spec
+
+RELEASE_%:
+	echo 0 > $@
