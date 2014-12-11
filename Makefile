@@ -37,7 +37,7 @@
 # c) in the form of a patch in patches/ and listed in patches/series.
 #
 # Dependencies you'll probably need to install to compile this: make, curl, git,
-# zip, unzip, java7-jdk | openjdk-7-jdk.
+# zip, unzip, patch, java7-jdk | openjdk-7-jdk.
 
 GRADLE_VERSION=2.2.1
 GRADLE=./gradle-$(GRADLE_VERSION)/bin/gradle
@@ -59,15 +59,26 @@ SCALA_VERSION_UNDERSCORE=$(subst .,_,$(SCALA_VERSION))
 
 PACKAGE_NAME=kafka-$(VERSION)-$(SCALA_VERSION)
 
+
+# Defaults that are likely to vary by platform. These are cleanly separated so
+# it should be easy to maintain altered values on platform-specific branches
+# when the values aren't overridden by the script invoking the Makefile
+DEFAULT_APPLY_PATCHES=yes
+DEFAULT_DESTDIR=$(CURDIR)/
+DEFAULT_PREFIX=$(PACKAGE_NAME)
+DEFAULT_SYSCONFDIR=PREFIX/etc/kafka
+DEFAULT_INCLUDE_WINDOWS_BIN=yes
+
+
 # Whether we should apply patches. This only makes sense for alternate packaging
 # systems that know how to apply patches themselves, e.g. Debian.
 ifndef APPLY_PATCHES
-APPLY_PATCHES=yes
+APPLY_PATCHES=$(DEFAULT_APPLY_PATCHES)
 endif
 
 # Install directories
 ifndef DESTDIR
-DESTDIR=$(CURDIR)/
+DESTDIR=$(DEFAULT_DESTDIR)
 endif
 # For platform-specific packaging you'll want to override this to a normal
 # PREFIX like /usr or /usr/local. Using the PACKAGE_NAME here makes the default
@@ -77,14 +88,25 @@ endif
 #     etc/
 #     share/kafka/
 ifndef PREFIX
-PREFIX=$(PACKAGE_NAME)
+PREFIX=$(DEFAULT_PREFIX)
 endif
 
+ifndef SYSCONFDIR
+SYSCONFDIR:=$(DEFAULT_SYSCONFDIR)
+endif
+SYSCONFDIR:=$(subst PREFIX,$(PREFIX),$(SYSCONFDIR))
+
+ifndef INCLUDE_WINDOWS_BIN
+INCLUDE_WINDOWS_BIN=$(DEFAULT_INCLUDE_WINDOWS_BIN)
+endif
+
+export APPLY_PATCHES
 export VERSION
 export SCALA_VERSION
 export DESTDIR
 export PREFIX
 export SYSCONFDIR
+export INCLUDE_WINDOWS_BIN
 
 all: install
 

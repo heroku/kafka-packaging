@@ -10,16 +10,8 @@ if [ -z ${VERSION} -o -z ${SCALA_VERSION} -o -z ${DESTDIR} ]; then
     exit 1
 fi
 
-if [ -z ${PREFIX} ]; then
-    PREFIX="/usr/local"
-fi
-
 if [ -z ${SYSCONFDIR} ]; then
     SYSCONFDIR="${PREFIX}/etc/kafka"
-fi
-
-if [ -z ${INCLUDE_WINDOWS_BIN} ]; then
-    INCLUDE_WINDOWS_BIN="yes"
 fi
 
 if `echo ${SCALA_VERSION} | grep '^2[.]8[.]' >/dev/null` || `echo ${SCALA_VERSION} | grep '^2[.]9[.]' >/dev/null`; then
