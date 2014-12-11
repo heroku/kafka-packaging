@@ -55,7 +55,7 @@ for path in ${TMP_ARCHIVE_PATH}/config/*; do
     ${INSTALL} -o root -g root ${path} ${DESTDIR}${SYSCONFDIR}/`basename ${path}`.example
 done
 
-ln -s ${TMP_ARCHIVE_PATH}/libs/kafka.jar ${DESTDIR}${LIBPATH}/kafka.jar # symlink for unversioned access to jar
+ln -s ./kafka_${SCALA_VERSION_SHORT}-${VERSION}.jar ${DESTDIR}${LIBPATH}/kafka.jar # symlink for unversioned access to jar
 
 ${INSTALL} -o root -g root ${TMP_ARCHIVE_PATH}/libs/kafka-clients-${VERSION}.jar ${DESTDIR}${LIBPATH}/
 
