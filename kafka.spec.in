@@ -57,6 +57,7 @@ exit 0
 /usr/bin/*
 /usr/share/kafka
 /var/log/kafka
+/etc/kafka
 
 %clean
 #used to cleanup things outside the build area and possibly inside.

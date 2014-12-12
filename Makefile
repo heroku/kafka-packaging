@@ -176,9 +176,11 @@ rpm: RPM_BUILDING/SOURCES/kafka-$(SCALA_VERSION)-$(RPM_VERSION).tar.gz
 RPM_BUILDING/SOURCES/kafka-$(SCALA_VERSION)-$(RPM_VERSION).tar.gz: rpm-build-area install kafka.spec.in RELEASE_$(SCALA_VERSION)_$(RPM_VERSION)_$(RPM_RELEASE_POSTFIX)
 	rm -rf kafka-$(SCALA_VERSION)-$(RPM_VERSION)
 	mkdir kafka-$(SCALA_VERSION)-$(RPM_VERSION)
-	cp -R $(DESTDIR)$(PREFIX) kafka-$(SCALA_VERSION)-$(RPM_VERSION)
+	cp -R $(DESTDIR)/* kafka-$(SCALA_VERSION)-$(RPM_VERSION)
 	./create_spec.sh kafka.spec.in kafka-$(SCALA_VERSION)-$(RPM_VERSION)/kafka.spec
-	rm -f $@ && cd $(DESTDIR) && tar -czf $@ kafka-$(SCALA_VERSION)-$(RPM_VERSION)
+	rm -f $@ && tar -czf $@ kafka-$(SCALA_VERSION)-$(RPM_VERSION)
+	# Cleanup temporary space used for generating source RPM tar.gz
+	rm -rf kafka-$(SCALA_VERSION)-$(RPM_VERSION)
 
 rpm-build-area: RPM_BUILDING/BUILD RPM_BUILDING/RPMS RPM_BUILDING/SOURCES RPM_BUILDING/SPECS RPM_BUILDING/SRPMS
 
