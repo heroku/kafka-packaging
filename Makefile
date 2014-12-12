@@ -123,8 +123,8 @@ gradle-$(GRADLE_VERSION):
 	rm -rf gradle-$(GRADLE_VERSION)-bin.zip
 
 apply-patches: $(wildcard patches/*)
-	git reset --hard HEAD
 ifeq ($(APPLY_PATCHES),yes)
+	git reset --hard HEAD
 	cat patches/series | xargs -iPATCH bash -c 'patch -p1 < patches/PATCH'
 endif
 
