@@ -67,11 +67,11 @@ PACKAGE_NAME=kafka-$(VERSION)-$(SCALA_VERSION)
 # Defaults that are likely to vary by platform. These are cleanly separated so
 # it should be easy to maintain altered values on platform-specific branches
 # when the values aren't overridden by the script invoking the Makefile
-DEFAULT_APPLY_PATCHES=yes
+DEFAULT_APPLY_PATCHES=no
 DEFAULT_DESTDIR=$(CURDIR)/BUILD/
-DEFAULT_PREFIX=$(PACKAGE_NAME)
-DEFAULT_SYSCONFDIR=PREFIX/etc/kafka
-DEFAULT_INCLUDE_WINDOWS_BIN=yes
+DEFAULT_PREFIX=/usr
+DEFAULT_SYSCONFDIR=/etc/kafka
+DEFAULT_INCLUDE_WINDOWS_BIN=no
 
 
 # Whether we should apply patches. This only makes sense for alternate packaging
@@ -133,8 +133,8 @@ ifeq ($(APPLY_PATCHES),yes)
 endif
 
 kafka: gradle apply-patches
-	$(GRADLE) -PscalaVersion=$(SCALA_VERSION)
-	./gradlew -PscalaVersion=$(SCALA_VERSION) releaseTarGz_$(SCALA_VERSION_UNDERSCORE)
+	$(GRADLE) -g /tmp/gradleuserhome -PscalaVersion=$(SCALA_VERSION)
+	./gradlew -g /tmp/gradleuserhome -PscalaVersion=$(SCALA_VERSION) releaseTarGz_$(SCALA_VERSION_UNDERSCORE)
 
 # create_archive gets the
 install: kafka

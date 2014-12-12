@@ -1,0 +1,5 @@
+kafka (0.8.2~beta-1) unstable; urgency=low
+
+  * Release 0.8.2-beta
+
+ -- Ewen Cheslack-Postava <ewen@confluent.io>  Thu, 11 Dec 2014 18:22:45 +0000
