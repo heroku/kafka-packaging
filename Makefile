@@ -46,9 +46,9 @@ GRADLE=./gradle-$(GRADLE_VERSION)/bin/gradle
 # are required and passed to create_archive.sh as environment variables. That
 # script can also pick up some other settings (PREFIX, SYSCONFDIR) to customize
 # layout of the installation.
+ifndef VERSION
 tag=$(shell git describe --abbrev=0)
 ver=$(shell echo $(tag) | sed -e 's/kafka-//' -e 's/-incubating-candidate-[0-9]//')
-ifndef VERSION
 VERSION=$(ver)
 endif
 
