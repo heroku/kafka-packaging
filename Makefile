@@ -64,7 +64,7 @@ export PACKAGE_NAME=kafka-$(VERSION)-$(SCALA_VERSION)
 # it should be easy to maintain altered values on platform-specific branches
 # when the values aren't overridden by the script invoking the Makefile
 DEFAULT_APPLY_PATCHES=yes
-DEFAULT_DESTDIR=$(CURDIR)/
+DEFAULT_DESTDIR=$(CURDIR)/BUILD/
 DEFAULT_PREFIX=/usr
 DEFAULT_SYSCONFDIR=/etc/kafka
 DEFAULT_INCLUDE_WINDOWS_BIN=no
