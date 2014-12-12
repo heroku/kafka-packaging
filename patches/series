@@ -1,2 +1,2 @@
 lsb_layout_classpath_setup.patch
-data_dirs_in_log_var.patch
+data_dirs_in_var_lib.patch
