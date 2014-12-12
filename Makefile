@@ -141,4 +141,8 @@ clean:
 	rm -rf $(DESTDIR)$(PREFIX)
 	rm -rf $(CURDIR)/$(PACKAGE_NAME)*
 
+distclean: clean
+
+test:
+
 .PHONY: clean install
