@@ -1,0 +1,57 @@
+RPM Build Instructions
+======================
+
+This branch contains a build configuration for RPMs (Fedora, RHEL, CentOS,
+etc.). This very closely matches the build for plain old tar.gz/zip files. The
+RPM spec file is setup so you should just get a platform independent RPM out as
+a result.
+
+Prerequisites
+-------------
+
+You probably want to do this all in a VM. Using Vagrant is probably a good
+idea. We don't include a Vagrantfile since it would conflict with Kafka's, but
+you should be able to do something like
+
+    vagrant init chef/fedora-20
+
+and then adjust the memory to make it more suitable for building Kafka.
+
+You'll need some tools to run the build:
+
+    $ sudo yum groupinstall "Development Tools"
+    $ sudo yum install java-1.7.0-openjdk-devel patch rpm-build
+
+Building
+--------
+
+In your copy of this `kafka-packaging` repository, make sure you have the
+`upstream` remote which contains the Kafka source, including tags.
+
+    $ cd kafka-packaging.git
+    $ git remote add upstream upstream http://git-wip-us.apache.org/repos/asf/kafka.git
+    $ git fetch upstream
+
+Now start a branch for the version you want to release, starting it from the
+current `rpm` branch. We'll use 0.8.2-beta as an example here:
+
+    $ git checkout -b rpm-0.8.2-beta rpm
+
+Now merge in the the real Kafka source code, assuming a tagged release:
+
+    $ git merge 0.8.2-beta
+
+And run the actual build in the VM, specifying the `SCALA_VERSION` if you don't
+just want the current Kafka default:
+
+    $ SCALA_VERSION=2.10.1 make rpm
+
+Once you've got the RPMs, you can cleanup. The branch was only created so we
+could generate a merge and easily get rid of the temporarily merged version, so
+you can just delete it.
+
+    $ git checkout rpm
+    $ git branch -D rpm-0.8.2-beta
+
+You probably want to test the package. You should probably do that in separate,
+clean, base VM using `rpm -ivh`.
