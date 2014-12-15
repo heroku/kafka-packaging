@@ -47,9 +47,13 @@ GRADLE=./gradle-$(GRADLE_VERSION)/bin/gradle
 # script can also pick up some other settings (PREFIX, SYSCONFDIR) to customize
 # layout of the installation.
 ifndef VERSION
+ifeq ($(wildcard .git),.git)
 tag=$(shell git describe --abbrev=0)
 ver=$(shell echo $(tag) | sed -e 's/kafka-//' -e 's/-incubating-candidate-[0-9]//')
 VERSION=$(ver)
+else
+VERSION=$(shell grep version gradle.properties | awk -F= '{ print $$2 }')
+endif
 endif
 
 ifndef SCALA_VERSION
