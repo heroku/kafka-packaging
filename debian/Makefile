@@ -57,7 +57,10 @@ endif
 endif
 
 ifndef SCALA_VERSION
+SCALA_VERSION=$(shell test -e debian/control && grep Package debian/control | awk -F- '{ print $$2 }')
+ifeq ($SCALA_VERSION,)
 SCALA_VERSION=$(shell grep ext[.]scalaVersion scala.gradle | awk -F\' '{ print $$2 }')
+endif
 endif
 SCALA_VERSION_UNDERSCORE=$(subst .,_,$(SCALA_VERSION))
 
