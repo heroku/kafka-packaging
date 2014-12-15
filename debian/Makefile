@@ -111,6 +111,7 @@ export DESTDIR
 export PREFIX
 export SYSCONFDIR
 export INCLUDE_WINDOWS_BIN
+export CREATE_VAR_LOG_KAFKA=yes
 
 all: install
 

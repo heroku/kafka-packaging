@@ -52,3 +52,8 @@ ln -s ./kafka_${SCALA_VERSION_SHORT}-${VERSION}.jar ${DESTDIR}${LIBPATH}/kafka.j
 ${INSTALL} -o root -g root ${TMP_ARCHIVE_PATH}/libs/kafka-clients-${VERSION}.jar ${DESTDIR}${LIBPATH}/
 
 rm -rf ${TMP_ARCHIVE_PATH}
+
+
+if [ -n $CREATE_VAR_LOG_KAFKA ]; then
+    mkdir -p ${DESTDIR}/var/log/kafka
+fi
