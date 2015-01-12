@@ -1,4 +1,4 @@
-Source: kafka
+Source: confluent-kafka
 Section: misc
 Priority: optional
 Maintainer: Ewen Cheslack-Postava <ewen@confluent.io>
@@ -7,7 +7,7 @@ Build-Depends: debhelper (>= 9), java7-jdk, javahelper (>= 0.40),
 Standards-Version: 3.9.3
 Homepage: http://kafka.apache.org
 
-Package: kafka-##SCALAVERSION##
+Package: confluent-kafka-##SCALAVERSION##
 Architecture: all
 Depends: java7-runtime, adduser, ${java:Depends}, ${misc:Depends}
 Recommends: ${java:Recommends}

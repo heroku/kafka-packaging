@@ -1,4 +1,4 @@
-kafka (0.8.2~beta-1) unstable; urgency=low
+confluent-kafka (0.8.2~beta-1) unstable; urgency=low
 
   * Release 0.8.2-beta
 
