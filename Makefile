@@ -61,7 +61,7 @@ SCALA_VERSION=$(shell grep ext[.]scalaVersion scala.gradle | awk -F\' '{ print $
 endif
 SCALA_VERSION_UNDERSCORE=$(subst .,_,$(SCALA_VERSION))
 
-PACKAGE_NAME=kafka-$(VERSION)-$(SCALA_VERSION)
+PACKAGE_NAME=confluent-kafka-$(VERSION)-$(SCALA_VERSION)
 
 
 # Defaults that are likely to vary by platform. These are cleanly separated so
