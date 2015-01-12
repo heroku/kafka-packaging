@@ -61,7 +61,7 @@ SCALA_VERSION=$(shell grep ext[.]scalaVersion scala.gradle | awk -F\' '{ print $
 endif
 SCALA_VERSION_UNDERSCORE=$(subst .,_,$(SCALA_VERSION))
 
-export PACKAGE_NAME=kafka-$(VERSION)-$(SCALA_VERSION)
+export PACKAGE_NAME=confluent-kafka-$(VERSION)-$(SCALA_VERSION)
 
 
 # Defaults that are likely to vary by platform. These are cleanly separated so
@@ -144,7 +144,7 @@ clean:
 	rm -rf $(CURDIR)/gradle-*
 	rm -rf $(DESTDIR)$(PREFIX)
 	rm -rf $(CURDIR)/$(PACKAGE_NAME)*
-	rm -rf kafka-$(RPM_VERSION)*rpm
+	rm -rf confluent-kafka-$(RPM_VERSION)*rpm
 	rm -rf RPM_BUILDING
 
 distclean: clean
@@ -165,14 +165,14 @@ export RPM_VERSION=$(shell echo $(VERSION) | sed -e 's/-alpha[0-9]*//' -e 's/-be
 # Version=0.8.2 Release=1)
 export RPM_RELEASE_POSTFIX=$(subst -,,$(subst $(RPM_VERSION),,$(VERSION)))
 
-rpm: RPM_BUILDING/SOURCES/kafka-$(SCALA_VERSION)-$(RPM_VERSION).tar.gz
+rpm: RPM_BUILDING/SOURCES/confluent-kafka-$(SCALA_VERSION)-$(RPM_VERSION).tar.gz
 	echo "Building the rpm"
 	rpmbuild --define="_topdir `pwd`/RPM_BUILDING" -tb $<
 	find RPM_BUILDING/{,S}RPMS/ -type f | xargs -n1 -iXXX mv XXX .
 	echo
 	echo "================================================="
 	echo "The rpms have been created and can be found here:"
-	@ls -laF kafka*rpm
+	@ls -laF confluent-kafka*rpm
 	echo "================================================="
 
 # Unfortunately, because of version naming issues and the way rpmbuild expects
@@ -181,22 +181,22 @@ rpm: RPM_BUILDING/SOURCES/kafka-$(SCALA_VERSION)-$(RPM_VERSION).tar.gz
 # installed version to generate a new archive. Note that we always regenerate
 # the symlink because the RPM_VERSION doesn't include all the version info -- it
 # can leave of things like -beta, -rc1, etc.
-RPM_BUILDING/SOURCES/kafka-$(SCALA_VERSION)-$(RPM_VERSION).tar.gz: rpm-build-area install kafka.spec.in RELEASE_$(SCALA_VERSION)_$(RPM_VERSION)_$(RPM_RELEASE_POSTFIX)
-	rm -rf kafka-$(SCALA_VERSION)-$(RPM_VERSION)
-	mkdir kafka-$(SCALA_VERSION)-$(RPM_VERSION)
-	cp -R $(DESTDIR)/* kafka-$(SCALA_VERSION)-$(RPM_VERSION)
-	./create_spec.sh kafka.spec.in kafka-$(SCALA_VERSION)-$(RPM_VERSION)/kafka.spec
-	rm -f $@ && tar -czf $@ kafka-$(SCALA_VERSION)-$(RPM_VERSION)
+RPM_BUILDING/SOURCES/confluent-kafka-$(SCALA_VERSION)-$(RPM_VERSION).tar.gz: rpm-build-area install confluent-kafka.spec.in RELEASE_$(SCALA_VERSION)_$(RPM_VERSION)_$(RPM_RELEASE_POSTFIX)
+	rm -rf confluent-kafka-$(SCALA_VERSION)-$(RPM_VERSION)
+	mkdir confluent-kafka-$(SCALA_VERSION)-$(RPM_VERSION)
+	cp -R $(DESTDIR)/* confluent-kafka-$(SCALA_VERSION)-$(RPM_VERSION)
+	./create_spec.sh confluent-kafka.spec.in confluent-kafka-$(SCALA_VERSION)-$(RPM_VERSION)/confluent-kafka.spec
+	rm -f $@ && tar -czf $@ confluent-kafka-$(SCALA_VERSION)-$(RPM_VERSION)
 	# Cleanup temporary space used for generating source RPM tar.gz
-	rm -rf kafka-$(SCALA_VERSION)-$(RPM_VERSION)
+	rm -rf confluent-kafka-$(SCALA_VERSION)-$(RPM_VERSION)
 
 rpm-build-area: RPM_BUILDING/BUILD RPM_BUILDING/RPMS RPM_BUILDING/SOURCES RPM_BUILDING/SPECS RPM_BUILDING/SRPMS
 
 RPM_BUILDING/%:
 	mkdir -p $@
 
-kafka.spec:
-	./create_spec.sh kafka.spec.in kafka.spec
+confluent-kafka.spec:
+	./create_spec.sh confluent-kafka.spec.in confluent-kafka.spec
 
 RELEASE_%:
 	echo 0 > $@
