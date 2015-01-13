@@ -1,0 +1,1249 @@
+diff --git a/bin/kafka-console-consumer b/bin/kafka-console-consumer
+new file mode 100755
+index 0000000..7598186
+--- /dev/null
++++ b/bin/kafka-console-consumer
+@@ -0,0 +1,21 @@
++#!/bin/bash
++# Licensed to the Apache Software Foundation (ASF) under one or more
++# contributor license agreements.  See the NOTICE file distributed with
++# this work for additional information regarding copyright ownership.
++# The ASF licenses this file to You under the Apache License, Version 2.0
++# (the "License"); you may not use this file except in compliance with
++# the License.  You may obtain a copy of the License at
++#
++#    http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
++
++if [ "x$KAFKA_HEAP_OPTS" = "x" ]; then
++    export KAFKA_HEAP_OPTS="-Xmx512M"
++fi
++
++exec $(dirname $0)/kafka-run-class kafka.tools.ConsoleConsumer $@
+diff --git a/bin/kafka-console-consumer.sh b/bin/kafka-console-consumer.sh
+deleted file mode 100755
+index 07c90a9..0000000
+--- a/bin/kafka-console-consumer.sh
++++ /dev/null
+@@ -1,21 +0,0 @@
+-#!/bin/bash
+-# Licensed to the Apache Software Foundation (ASF) under one or more
+-# contributor license agreements.  See the NOTICE file distributed with
+-# this work for additional information regarding copyright ownership.
+-# The ASF licenses this file to You under the Apache License, Version 2.0
+-# (the "License"); you may not use this file except in compliance with
+-# the License.  You may obtain a copy of the License at
+-#
+-#    http://www.apache.org/licenses/LICENSE-2.0
+-#
+-# Unless required by applicable law or agreed to in writing, software
+-# distributed under the License is distributed on an "AS IS" BASIS,
+-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-# See the License for the specific language governing permissions and
+-# limitations under the License.
+-
+-if [ "x$KAFKA_HEAP_OPTS" = "x" ]; then
+-    export KAFKA_HEAP_OPTS="-Xmx512M"
+-fi
+-
+-exec $(dirname $0)/kafka-run-class.sh kafka.tools.ConsoleConsumer $@
+diff --git a/bin/kafka-console-producer b/bin/kafka-console-producer
+new file mode 100755
+index 0000000..d4c28b0
+--- /dev/null
++++ b/bin/kafka-console-producer
+@@ -0,0 +1,20 @@
++#!/bin/bash
++# Licensed to the Apache Software Foundation (ASF) under one or more
++# contributor license agreements.  See the NOTICE file distributed with
++# this work for additional information regarding copyright ownership.
++# The ASF licenses this file to You under the Apache License, Version 2.0
++# (the "License"); you may not use this file except in compliance with
++# the License.  You may obtain a copy of the License at
++#
++#    http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
++
++if [ "x$KAFKA_HEAP_OPTS" = "x" ]; then
++    export KAFKA_HEAP_OPTS="-Xmx512M"
++fi
++exec $(dirname $0)/kafka-run-class kafka.tools.ConsoleProducer $@
+diff --git a/bin/kafka-console-producer.sh b/bin/kafka-console-producer.sh
+deleted file mode 100755
+index ccca66d..0000000
+--- a/bin/kafka-console-producer.sh
++++ /dev/null
+@@ -1,20 +0,0 @@
+-#!/bin/bash
+-# Licensed to the Apache Software Foundation (ASF) under one or more
+-# contributor license agreements.  See the NOTICE file distributed with
+-# this work for additional information regarding copyright ownership.
+-# The ASF licenses this file to You under the Apache License, Version 2.0
+-# (the "License"); you may not use this file except in compliance with
+-# the License.  You may obtain a copy of the License at
+-#
+-#    http://www.apache.org/licenses/LICENSE-2.0
+-#
+-# Unless required by applicable law or agreed to in writing, software
+-# distributed under the License is distributed on an "AS IS" BASIS,
+-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-# See the License for the specific language governing permissions and
+-# limitations under the License.
+-
+-if [ "x$KAFKA_HEAP_OPTS" = "x" ]; then
+-    export KAFKA_HEAP_OPTS="-Xmx512M"
+-fi
+-exec $(dirname $0)/kafka-run-class.sh kafka.tools.ConsoleProducer $@
+diff --git a/bin/kafka-consumer-offset-checker b/bin/kafka-consumer-offset-checker
+new file mode 100755
+index 0000000..0384da1
+--- /dev/null
++++ b/bin/kafka-consumer-offset-checker
+@@ -0,0 +1,17 @@
++#!/bin/bash
++# Licensed to the Apache Software Foundation (ASF) under one or more
++# contributor license agreements.  See the NOTICE file distributed with
++# this work for additional information regarding copyright ownership.
++# The ASF licenses this file to You under the Apache License, Version 2.0
++# (the "License"); you may not use this file except in compliance with
++# the License.  You may obtain a copy of the License at
++# 
++#    http://www.apache.org/licenses/LICENSE-2.0
++# 
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
++
++exec $(dirname $0)/kafka-run-class kafka.tools.ConsumerOffsetChecker $@
+diff --git a/bin/kafka-consumer-offset-checker.sh b/bin/kafka-consumer-offset-checker.sh
+deleted file mode 100755
+index c275f7e..0000000
+--- a/bin/kafka-consumer-offset-checker.sh
++++ /dev/null
+@@ -1,17 +0,0 @@
+-#!/bin/bash
+-# Licensed to the Apache Software Foundation (ASF) under one or more
+-# contributor license agreements.  See the NOTICE file distributed with
+-# this work for additional information regarding copyright ownership.
+-# The ASF licenses this file to You under the Apache License, Version 2.0
+-# (the "License"); you may not use this file except in compliance with
+-# the License.  You may obtain a copy of the License at
+-# 
+-#    http://www.apache.org/licenses/LICENSE-2.0
+-# 
+-# Unless required by applicable law or agreed to in writing, software
+-# distributed under the License is distributed on an "AS IS" BASIS,
+-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-# See the License for the specific language governing permissions and
+-# limitations under the License.
+-
+-exec $(dirname $0)/kafka-run-class.sh kafka.tools.ConsumerOffsetChecker $@
+diff --git a/bin/kafka-consumer-perf-test b/bin/kafka-consumer-perf-test
+new file mode 100755
+index 0000000..3aaf70f
+--- /dev/null
++++ b/bin/kafka-consumer-perf-test
+@@ -0,0 +1,20 @@
++#!/bin/bash
++# Licensed to the Apache Software Foundation (ASF) under one or more
++# contributor license agreements.  See the NOTICE file distributed with
++# this work for additional information regarding copyright ownership.
++# The ASF licenses this file to You under the Apache License, Version 2.0
++# (the "License"); you may not use this file except in compliance with
++# the License.  You may obtain a copy of the License at
++#
++#    http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
++
++if [ "x$KAFKA_HEAP_OPTS" = "x" ]; then
++    export KAFKA_HEAP_OPTS="-Xmx512M"
++fi
++exec $(dirname $0)/kafka-run-class kafka.tools.ConsumerPerformance $@
+diff --git a/bin/kafka-consumer-perf-test.sh b/bin/kafka-consumer-perf-test.sh
+deleted file mode 100755
+index ebc513a..0000000
+--- a/bin/kafka-consumer-perf-test.sh
++++ /dev/null
+@@ -1,20 +0,0 @@
+-#!/bin/bash
+-# Licensed to the Apache Software Foundation (ASF) under one or more
+-# contributor license agreements.  See the NOTICE file distributed with
+-# this work for additional information regarding copyright ownership.
+-# The ASF licenses this file to You under the Apache License, Version 2.0
+-# (the "License"); you may not use this file except in compliance with
+-# the License.  You may obtain a copy of the License at
+-#
+-#    http://www.apache.org/licenses/LICENSE-2.0
+-#
+-# Unless required by applicable law or agreed to in writing, software
+-# distributed under the License is distributed on an "AS IS" BASIS,
+-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-# See the License for the specific language governing permissions and
+-# limitations under the License.
+-
+-if [ "x$KAFKA_HEAP_OPTS" = "x" ]; then
+-    export KAFKA_HEAP_OPTS="-Xmx512M"
+-fi
+-exec $(dirname $0)/kafka-run-class.sh kafka.tools.ConsumerPerformance $@
+diff --git a/bin/kafka-mirror-maker b/bin/kafka-mirror-maker
+new file mode 100755
+index 0000000..74f0790
+--- /dev/null
++++ b/bin/kafka-mirror-maker
+@@ -0,0 +1,17 @@
++#!/bin/bash
++# Licensed to the Apache Software Foundation (ASF) under one or more
++# contributor license agreements.  See the NOTICE file distributed with
++# this work for additional information regarding copyright ownership.
++# The ASF licenses this file to You under the Apache License, Version 2.0
++# (the "License"); you may not use this file except in compliance with
++# the License.  You may obtain a copy of the License at
++# 
++#    http://www.apache.org/licenses/LICENSE-2.0
++# 
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
++
++exec $(dirname $0)/kafka-run-class kafka.tools.MirrorMaker $@
+diff --git a/bin/kafka-mirror-maker.sh b/bin/kafka-mirror-maker.sh
+deleted file mode 100755
+index 56e342c..0000000
+--- a/bin/kafka-mirror-maker.sh
++++ /dev/null
+@@ -1,17 +0,0 @@
+-#!/bin/bash
+-# Licensed to the Apache Software Foundation (ASF) under one or more
+-# contributor license agreements.  See the NOTICE file distributed with
+-# this work for additional information regarding copyright ownership.
+-# The ASF licenses this file to You under the Apache License, Version 2.0
+-# (the "License"); you may not use this file except in compliance with
+-# the License.  You may obtain a copy of the License at
+-# 
+-#    http://www.apache.org/licenses/LICENSE-2.0
+-# 
+-# Unless required by applicable law or agreed to in writing, software
+-# distributed under the License is distributed on an "AS IS" BASIS,
+-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-# See the License for the specific language governing permissions and
+-# limitations under the License.
+-
+-exec $(dirname $0)/kafka-run-class.sh kafka.tools.MirrorMaker $@
+diff --git a/bin/kafka-preferred-replica-election b/bin/kafka-preferred-replica-election
+new file mode 100755
+index 0000000..a51b65b
+--- /dev/null
++++ b/bin/kafka-preferred-replica-election
+@@ -0,0 +1,17 @@
++#!/bin/bash
++# Licensed to the Apache Software Foundation (ASF) under one or more
++# contributor license agreements.  See the NOTICE file distributed with
++# this work for additional information regarding copyright ownership.
++# The ASF licenses this file to You under the Apache License, Version 2.0
++# (the "License"); you may not use this file except in compliance with
++# the License.  You may obtain a copy of the License at
++#
++#    http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
++
++exec $(dirname $0)/kafka-run-class kafka.admin.PreferredReplicaLeaderElectionCommand $@
+diff --git a/bin/kafka-preferred-replica-election.sh b/bin/kafka-preferred-replica-election.sh
+deleted file mode 100755
+index ed167c2..0000000
+--- a/bin/kafka-preferred-replica-election.sh
++++ /dev/null
+@@ -1,17 +0,0 @@
+-#!/bin/bash
+-# Licensed to the Apache Software Foundation (ASF) under one or more
+-# contributor license agreements.  See the NOTICE file distributed with
+-# this work for additional information regarding copyright ownership.
+-# The ASF licenses this file to You under the Apache License, Version 2.0
+-# (the "License"); you may not use this file except in compliance with
+-# the License.  You may obtain a copy of the License at
+-#
+-#    http://www.apache.org/licenses/LICENSE-2.0
+-#
+-# Unless required by applicable law or agreed to in writing, software
+-# distributed under the License is distributed on an "AS IS" BASIS,
+-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-# See the License for the specific language governing permissions and
+-# limitations under the License.
+-
+-exec $(dirname $0)/kafka-run-class.sh kafka.admin.PreferredReplicaLeaderElectionCommand $@
+diff --git a/bin/kafka-producer-perf-test b/bin/kafka-producer-perf-test
+new file mode 100755
+index 0000000..690f011
+--- /dev/null
++++ b/bin/kafka-producer-perf-test
+@@ -0,0 +1,20 @@
++#!/bin/bash
++# Licensed to the Apache Software Foundation (ASF) under one or more
++# contributor license agreements.  See the NOTICE file distributed with
++# this work for additional information regarding copyright ownership.
++# The ASF licenses this file to You under the Apache License, Version 2.0
++# (the "License"); you may not use this file except in compliance with
++# the License.  You may obtain a copy of the License at
++#
++#    http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
++
++if [ "x$KAFKA_HEAP_OPTS" = "x" ]; then
++    export KAFKA_HEAP_OPTS="-Xmx512M"
++fi
++exec $(dirname $0)/kafka-run-class kafka.tools.ProducerPerformance $@
+diff --git a/bin/kafka-producer-perf-test.sh b/bin/kafka-producer-perf-test.sh
+deleted file mode 100755
+index 84ac949..0000000
+--- a/bin/kafka-producer-perf-test.sh
++++ /dev/null
+@@ -1,20 +0,0 @@
+-#!/bin/bash
+-# Licensed to the Apache Software Foundation (ASF) under one or more
+-# contributor license agreements.  See the NOTICE file distributed with
+-# this work for additional information regarding copyright ownership.
+-# The ASF licenses this file to You under the Apache License, Version 2.0
+-# (the "License"); you may not use this file except in compliance with
+-# the License.  You may obtain a copy of the License at
+-#
+-#    http://www.apache.org/licenses/LICENSE-2.0
+-#
+-# Unless required by applicable law or agreed to in writing, software
+-# distributed under the License is distributed on an "AS IS" BASIS,
+-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-# See the License for the specific language governing permissions and
+-# limitations under the License.
+-
+-if [ "x$KAFKA_HEAP_OPTS" = "x" ]; then
+-    export KAFKA_HEAP_OPTS="-Xmx512M"
+-fi
+-exec $(dirname $0)/kafka-run-class.sh kafka.tools.ProducerPerformance $@
+diff --git a/bin/kafka-reassign-partitions b/bin/kafka-reassign-partitions
+new file mode 100755
+index 0000000..3111b1c
+--- /dev/null
++++ b/bin/kafka-reassign-partitions
+@@ -0,0 +1,17 @@
++#!/bin/bash
++# Licensed to the Apache Software Foundation (ASF) under one or more
++# contributor license agreements.  See the NOTICE file distributed with
++# this work for additional information regarding copyright ownership.
++# The ASF licenses this file to You under the Apache License, Version 2.0
++# (the "License"); you may not use this file except in compliance with
++# the License.  You may obtain a copy of the License at
++#
++#    http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
++
++exec $(dirname $0)/kafka-run-class kafka.admin.ReassignPartitionsCommand $@
+diff --git a/bin/kafka-reassign-partitions.sh b/bin/kafka-reassign-partitions.sh
+deleted file mode 100755
+index 95b4ae0..0000000
+--- a/bin/kafka-reassign-partitions.sh
++++ /dev/null
+@@ -1,17 +0,0 @@
+-#!/bin/bash
+-# Licensed to the Apache Software Foundation (ASF) under one or more
+-# contributor license agreements.  See the NOTICE file distributed with
+-# this work for additional information regarding copyright ownership.
+-# The ASF licenses this file to You under the Apache License, Version 2.0
+-# (the "License"); you may not use this file except in compliance with
+-# the License.  You may obtain a copy of the License at
+-#
+-#    http://www.apache.org/licenses/LICENSE-2.0
+-#
+-# Unless required by applicable law or agreed to in writing, software
+-# distributed under the License is distributed on an "AS IS" BASIS,
+-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-# See the License for the specific language governing permissions and
+-# limitations under the License.
+-
+-exec $(dirname $0)/kafka-run-class.sh kafka.admin.ReassignPartitionsCommand $@
+diff --git a/bin/kafka-replay-log-producer b/bin/kafka-replay-log-producer
+new file mode 100755
+index 0000000..9601f68
+--- /dev/null
++++ b/bin/kafka-replay-log-producer
+@@ -0,0 +1,17 @@
++#!/bin/bash
++# Licensed to the Apache Software Foundation (ASF) under one or more
++# contributor license agreements.  See the NOTICE file distributed with
++# this work for additional information regarding copyright ownership.
++# The ASF licenses this file to You under the Apache License, Version 2.0
++# (the "License"); you may not use this file except in compliance with
++# the License.  You may obtain a copy of the License at
++# 
++#    http://www.apache.org/licenses/LICENSE-2.0
++# 
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
++
++exec $(dirname $0)/kafka-run-class kafka.tools.ReplayLogProducer $@
+diff --git a/bin/kafka-replay-log-producer.sh b/bin/kafka-replay-log-producer.sh
+deleted file mode 100755
+index 8e2e713..0000000
+--- a/bin/kafka-replay-log-producer.sh
++++ /dev/null
+@@ -1,17 +0,0 @@
+-#!/bin/bash
+-# Licensed to the Apache Software Foundation (ASF) under one or more
+-# contributor license agreements.  See the NOTICE file distributed with
+-# this work for additional information regarding copyright ownership.
+-# The ASF licenses this file to You under the Apache License, Version 2.0
+-# (the "License"); you may not use this file except in compliance with
+-# the License.  You may obtain a copy of the License at
+-# 
+-#    http://www.apache.org/licenses/LICENSE-2.0
+-# 
+-# Unless required by applicable law or agreed to in writing, software
+-# distributed under the License is distributed on an "AS IS" BASIS,
+-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-# See the License for the specific language governing permissions and
+-# limitations under the License.
+-
+-exec $(dirname $0)/kafka-run-class.sh kafka.tools.ReplayLogProducer $@
+diff --git a/bin/kafka-replica-verification b/bin/kafka-replica-verification
+new file mode 100755
+index 0000000..b7d1182
+--- /dev/null
++++ b/bin/kafka-replica-verification
+@@ -0,0 +1,17 @@
++#!/bin/bash
++# Licensed to the Apache Software Foundation (ASF) under one or more
++# contributor license agreements.  See the NOTICE file distributed with
++# this work for additional information regarding copyright ownership.
++# The ASF licenses this file to You under the Apache License, Version 2.0
++# (the "License"); you may not use this file except in compliance with
++# the License.  You may obtain a copy of the License at
++# 
++#    http://www.apache.org/licenses/LICENSE-2.0
++# 
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
++
++exec $(dirname $0)/kafka-run-class kafka.tools.ReplicaVerificationTool $@
+diff --git a/bin/kafka-replica-verification.sh b/bin/kafka-replica-verification.sh
+deleted file mode 100755
+index ee6d19e..0000000
+--- a/bin/kafka-replica-verification.sh
++++ /dev/null
+@@ -1,17 +0,0 @@
+-#!/bin/bash
+-# Licensed to the Apache Software Foundation (ASF) under one or more
+-# contributor license agreements.  See the NOTICE file distributed with
+-# this work for additional information regarding copyright ownership.
+-# The ASF licenses this file to You under the Apache License, Version 2.0
+-# (the "License"); you may not use this file except in compliance with
+-# the License.  You may obtain a copy of the License at
+-# 
+-#    http://www.apache.org/licenses/LICENSE-2.0
+-# 
+-# Unless required by applicable law or agreed to in writing, software
+-# distributed under the License is distributed on an "AS IS" BASIS,
+-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-# See the License for the specific language governing permissions and
+-# limitations under the License.
+-
+-exec $(dirname $0)/kafka-run-class.sh kafka.tools.ReplicaVerificationTool $@
+diff --git a/bin/kafka-run-class b/bin/kafka-run-class
+new file mode 100755
+index 0000000..36c742b
+--- /dev/null
++++ b/bin/kafka-run-class
+@@ -0,0 +1,156 @@
++#!/bin/bash
++# Licensed to the Apache Software Foundation (ASF) under one or more
++# contributor license agreements.  See the NOTICE file distributed with
++# this work for additional information regarding copyright ownership.
++# The ASF licenses this file to You under the Apache License, Version 2.0
++# (the "License"); you may not use this file except in compliance with
++# the License.  You may obtain a copy of the License at
++#
++#    http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
++
++if [ $# -lt 1 ];
++then
++  echo "USAGE: $0 [-daemon] [-name servicename] [-loggc] classname [opts]"
++  exit 1
++fi
++
++base_dir=$(dirname $0)/..
++
++# create logs directory
++if [ "x$LOG_DIR" = "x" ]; then
++    LOG_DIR="$base_dir/logs"
++fi
++
++if [ ! -d "$LOG_DIR" ]; then
++    mkdir -p "$LOG_DIR"
++fi
++
++if [ -z "$SCALA_VERSION" ]; then
++	SCALA_VERSION=2.10.1
++fi
++
++if [ -z "$SCALA_BINARY_VERSION" ]; then
++	SCALA_BINARY_VERSION=2.10
++fi
++
++# run ./gradlew copyDependantLibs to get all dependant jars in a local dir
++for file in $base_dir/core/build/dependant-libs-${SCALA_VERSION}*/*.jar;
++do
++  CLASSPATH=$CLASSPATH:$file
++done
++
++for file in $base_dir/examples/build/libs//kafka-examples*.jar;
++do
++  CLASSPATH=$CLASSPATH:$file
++done
++
++for file in $base_dir/contrib/hadoop-consumer/build/libs//kafka-hadoop-consumer*.jar;
++do
++  CLASSPATH=$CLASSPATH:$file
++done
++
++for file in $base_dir/contrib/hadoop-producer/build/libs//kafka-hadoop-producer*.jar;
++do
++  CLASSPATH=$CLASSPATH:$file
++done
++
++for file in $base_dir/clients/build/libs/kafka-clients*.jar;
++do
++  CLASSPATH=$CLASSPATH:$file
++done
++
++# classpath addition for release
++for file in $base_dir/libs/*.jar;
++do
++  CLASSPATH=$CLASSPATH:$file
++done
++
++for file in $base_dir/core/build/libs/kafka_${SCALA_BINARY_VERSION}*.jar;
++do
++  CLASSPATH=$CLASSPATH:$file
++done
++
++# JMX settings
++if [ -z "$KAFKA_JMX_OPTS" ]; then
++  KAFKA_JMX_OPTS="-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false  -Dcom.sun.management.jmxremote.ssl=false "
++fi
++
++# JMX port to use
++if [  $JMX_PORT ]; then
++  KAFKA_JMX_OPTS="$KAFKA_JMX_OPTS -Dcom.sun.management.jmxremote.port=$JMX_PORT "
++fi
++
++# Log4j settings
++if [ -z "$KAFKA_LOG4J_OPTS" ]; then
++  KAFKA_LOG4J_OPTS="-Dlog4j.configuration=file:$base_dir/config/tools-log4j.properties"
++fi
++
++KAFKA_LOG4J_OPTS="-Dkafka.logs.dir=$LOG_DIR $KAFKA_LOG4J_OPTS"
++
++# Generic jvm settings you want to add
++if [ -z "$KAFKA_OPTS" ]; then
++  KAFKA_OPTS=""
++fi
++
++# Which java to use
++if [ -z "$JAVA_HOME" ]; then
++  JAVA="java"
++else
++  JAVA="$JAVA_HOME/bin/java"
++fi
++
++# Memory options
++if [ -z "$KAFKA_HEAP_OPTS" ]; then
++  KAFKA_HEAP_OPTS="-Xmx256M"
++fi
++
++# JVM performance options
++if [ -z "$KAFKA_JVM_PERFORMANCE_OPTS" ]; then
++  KAFKA_JVM_PERFORMANCE_OPTS="-server -XX:+UseCompressedOops -XX:+UseParNewGC -XX:+UseConcMarkSweepGC -XX:+CMSClassUnloadingEnabled -XX:+CMSScavengeBeforeRemark -XX:+DisableExplicitGC -Djava.awt.headless=true"
++fi
++
++
++while [ $# -gt 0 ]; do
++  COMMAND=$1
++  case $COMMAND in
++    -name)
++      DAEMON_NAME=$2
++      CONSOLE_OUTPUT_FILE=$LOG_DIR/$DAEMON_NAME.out
++      shift 2
++      ;;
++    -loggc)
++      if [ -z "$KAFKA_GC_LOG_OPTS"] ; then
++        GC_LOG_ENABLED="true"
++      fi
++      shift
++      ;;
++    -daemon)
++      DAEMON_MODE="true"
++      shift
++      ;;
++    *)
++      break
++      ;;
++  esac
++done
++
++# GC options
++GC_FILE_SUFFIX='-gc.log'
++GC_LOG_FILE_NAME=''
++if [ "x$GC_LOG_ENABLED" = "xtrue" ]; then
++  GC_LOG_FILE_NAME=$DAEMON_NAME$GC_FILE_SUFFIX
++  KAFKA_GC_LOG_OPTS="-Xloggc:$LOG_DIR/$GC_LOG_FILE_NAME -verbose:gc -XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+PrintGCTimeStamps "
++fi
++
++# Launch mode
++if [ "x$DAEMON_MODE" = "xtrue" ]; then
++  nohup $JAVA $KAFKA_HEAP_OPTS $KAFKA_JVM_PERFORMANCE_OPTS $KAFKA_GC_LOG_OPTS $KAFKA_JMX_OPTS $KAFKA_LOG4J_OPTS -cp $CLASSPATH $KAFKA_OPTS "$@" > "$CONSOLE_OUTPUT_FILE" 2>&1 < /dev/null &
++else
++  exec $JAVA $KAFKA_HEAP_OPTS $KAFKA_JVM_PERFORMANCE_OPTS $KAFKA_GC_LOG_OPTS $KAFKA_JMX_OPTS $KAFKA_LOG4J_OPTS -cp $CLASSPATH $KAFKA_OPTS "$@"
++fi
+diff --git a/bin/kafka-run-class.sh b/bin/kafka-run-class.sh
+deleted file mode 100755
+index 36c742b..0000000
+--- a/bin/kafka-run-class.sh
++++ /dev/null
+@@ -1,156 +0,0 @@
+-#!/bin/bash
+-# Licensed to the Apache Software Foundation (ASF) under one or more
+-# contributor license agreements.  See the NOTICE file distributed with
+-# this work for additional information regarding copyright ownership.
+-# The ASF licenses this file to You under the Apache License, Version 2.0
+-# (the "License"); you may not use this file except in compliance with
+-# the License.  You may obtain a copy of the License at
+-#
+-#    http://www.apache.org/licenses/LICENSE-2.0
+-#
+-# Unless required by applicable law or agreed to in writing, software
+-# distributed under the License is distributed on an "AS IS" BASIS,
+-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-# See the License for the specific language governing permissions and
+-# limitations under the License.
+-
+-if [ $# -lt 1 ];
+-then
+-  echo "USAGE: $0 [-daemon] [-name servicename] [-loggc] classname [opts]"
+-  exit 1
+-fi
+-
+-base_dir=$(dirname $0)/..
+-
+-# create logs directory
+-if [ "x$LOG_DIR" = "x" ]; then
+-    LOG_DIR="$base_dir/logs"
+-fi
+-
+-if [ ! -d "$LOG_DIR" ]; then
+-    mkdir -p "$LOG_DIR"
+-fi
+-
+-if [ -z "$SCALA_VERSION" ]; then
+-	SCALA_VERSION=2.10.1
+-fi
+-
+-if [ -z "$SCALA_BINARY_VERSION" ]; then
+-	SCALA_BINARY_VERSION=2.10
+-fi
+-
+-# run ./gradlew copyDependantLibs to get all dependant jars in a local dir
+-for file in $base_dir/core/build/dependant-libs-${SCALA_VERSION}*/*.jar;
+-do
+-  CLASSPATH=$CLASSPATH:$file
+-done
+-
+-for file in $base_dir/examples/build/libs//kafka-examples*.jar;
+-do
+-  CLASSPATH=$CLASSPATH:$file
+-done
+-
+-for file in $base_dir/contrib/hadoop-consumer/build/libs//kafka-hadoop-consumer*.jar;
+-do
+-  CLASSPATH=$CLASSPATH:$file
+-done
+-
+-for file in $base_dir/contrib/hadoop-producer/build/libs//kafka-hadoop-producer*.jar;
+-do
+-  CLASSPATH=$CLASSPATH:$file
+-done
+-
+-for file in $base_dir/clients/build/libs/kafka-clients*.jar;
+-do
+-  CLASSPATH=$CLASSPATH:$file
+-done
+-
+-# classpath addition for release
+-for file in $base_dir/libs/*.jar;
+-do
+-  CLASSPATH=$CLASSPATH:$file
+-done
+-
+-for file in $base_dir/core/build/libs/kafka_${SCALA_BINARY_VERSION}*.jar;
+-do
+-  CLASSPATH=$CLASSPATH:$file
+-done
+-
+-# JMX settings
+-if [ -z "$KAFKA_JMX_OPTS" ]; then
+-  KAFKA_JMX_OPTS="-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false  -Dcom.sun.management.jmxremote.ssl=false "
+-fi
+-
+-# JMX port to use
+-if [  $JMX_PORT ]; then
+-  KAFKA_JMX_OPTS="$KAFKA_JMX_OPTS -Dcom.sun.management.jmxremote.port=$JMX_PORT "
+-fi
+-
+-# Log4j settings
+-if [ -z "$KAFKA_LOG4J_OPTS" ]; then
+-  KAFKA_LOG4J_OPTS="-Dlog4j.configuration=file:$base_dir/config/tools-log4j.properties"
+-fi
+-
+-KAFKA_LOG4J_OPTS="-Dkafka.logs.dir=$LOG_DIR $KAFKA_LOG4J_OPTS"
+-
+-# Generic jvm settings you want to add
+-if [ -z "$KAFKA_OPTS" ]; then
+-  KAFKA_OPTS=""
+-fi
+-
+-# Which java to use
+-if [ -z "$JAVA_HOME" ]; then
+-  JAVA="java"
+-else
+-  JAVA="$JAVA_HOME/bin/java"
+-fi
+-
+-# Memory options
+-if [ -z "$KAFKA_HEAP_OPTS" ]; then
+-  KAFKA_HEAP_OPTS="-Xmx256M"
+-fi
+-
+-# JVM performance options
+-if [ -z "$KAFKA_JVM_PERFORMANCE_OPTS" ]; then
+-  KAFKA_JVM_PERFORMANCE_OPTS="-server -XX:+UseCompressedOops -XX:+UseParNewGC -XX:+UseConcMarkSweepGC -XX:+CMSClassUnloadingEnabled -XX:+CMSScavengeBeforeRemark -XX:+DisableExplicitGC -Djava.awt.headless=true"
+-fi
+-
+-
+-while [ $# -gt 0 ]; do
+-  COMMAND=$1
+-  case $COMMAND in
+-    -name)
+-      DAEMON_NAME=$2
+-      CONSOLE_OUTPUT_FILE=$LOG_DIR/$DAEMON_NAME.out
+-      shift 2
+-      ;;
+-    -loggc)
+-      if [ -z "$KAFKA_GC_LOG_OPTS"] ; then
+-        GC_LOG_ENABLED="true"
+-      fi
+-      shift
+-      ;;
+-    -daemon)
+-      DAEMON_MODE="true"
+-      shift
+-      ;;
+-    *)
+-      break
+-      ;;
+-  esac
+-done
+-
+-# GC options
+-GC_FILE_SUFFIX='-gc.log'
+-GC_LOG_FILE_NAME=''
+-if [ "x$GC_LOG_ENABLED" = "xtrue" ]; then
+-  GC_LOG_FILE_NAME=$DAEMON_NAME$GC_FILE_SUFFIX
+-  KAFKA_GC_LOG_OPTS="-Xloggc:$LOG_DIR/$GC_LOG_FILE_NAME -verbose:gc -XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+PrintGCTimeStamps "
+-fi
+-
+-# Launch mode
+-if [ "x$DAEMON_MODE" = "xtrue" ]; then
+-  nohup $JAVA $KAFKA_HEAP_OPTS $KAFKA_JVM_PERFORMANCE_OPTS $KAFKA_GC_LOG_OPTS $KAFKA_JMX_OPTS $KAFKA_LOG4J_OPTS -cp $CLASSPATH $KAFKA_OPTS "$@" > "$CONSOLE_OUTPUT_FILE" 2>&1 < /dev/null &
+-else
+-  exec $JAVA $KAFKA_HEAP_OPTS $KAFKA_JVM_PERFORMANCE_OPTS $KAFKA_GC_LOG_OPTS $KAFKA_JMX_OPTS $KAFKA_LOG4J_OPTS -cp $CLASSPATH $KAFKA_OPTS "$@"
+-fi
+diff --git a/bin/kafka-server-start b/bin/kafka-server-start
+new file mode 100755
+index 0000000..0a0e523
+--- /dev/null
++++ b/bin/kafka-server-start
+@@ -0,0 +1,44 @@
++#!/bin/bash
++# Licensed to the Apache Software Foundation (ASF) under one or more
++# contributor license agreements.  See the NOTICE file distributed with
++# this work for additional information regarding copyright ownership.
++# The ASF licenses this file to You under the Apache License, Version 2.0
++# (the "License"); you may not use this file except in compliance with
++# the License.  You may obtain a copy of the License at
++# 
++#    http://www.apache.org/licenses/LICENSE-2.0
++# 
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
++
++if [ $# -lt 1 ];
++then
++	echo "USAGE: $0 [-daemon] server.properties"
++	exit 1
++fi
++base_dir=$(dirname $0)
++
++if [ "x$KAFKA_LOG4J_OPTS" = "x" ]; then
++    export KAFKA_LOG4J_OPTS="-Dlog4j.configuration=file:$base_dir/../config/log4j.properties"
++fi
++
++if [ "x$KAFKA_HEAP_OPTS" = "x" ]; then
++    export KAFKA_HEAP_OPTS="-Xmx1G -Xms1G"
++fi
++
++EXTRA_ARGS="-name kafkaServer -loggc"
++
++COMMAND=$1
++case $COMMAND in
++  -daemon)
++    EXTRA_ARGS="-daemon "$EXTRA_ARGS
++    shift
++    ;;
++  *)
++    ;;
++esac
++
++exec $base_dir/kafka-run-class $EXTRA_ARGS kafka.Kafka $@
+diff --git a/bin/kafka-server-start.sh b/bin/kafka-server-start.sh
+deleted file mode 100755
+index 1737d0c..0000000
+--- a/bin/kafka-server-start.sh
++++ /dev/null
+@@ -1,44 +0,0 @@
+-#!/bin/bash
+-# Licensed to the Apache Software Foundation (ASF) under one or more
+-# contributor license agreements.  See the NOTICE file distributed with
+-# this work for additional information regarding copyright ownership.
+-# The ASF licenses this file to You under the Apache License, Version 2.0
+-# (the "License"); you may not use this file except in compliance with
+-# the License.  You may obtain a copy of the License at
+-# 
+-#    http://www.apache.org/licenses/LICENSE-2.0
+-# 
+-# Unless required by applicable law or agreed to in writing, software
+-# distributed under the License is distributed on an "AS IS" BASIS,
+-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-# See the License for the specific language governing permissions and
+-# limitations under the License.
+-
+-if [ $# -lt 1 ];
+-then
+-	echo "USAGE: $0 [-daemon] server.properties"
+-	exit 1
+-fi
+-base_dir=$(dirname $0)
+-
+-if [ "x$KAFKA_LOG4J_OPTS" = "x" ]; then
+-    export KAFKA_LOG4J_OPTS="-Dlog4j.configuration=file:$base_dir/../config/log4j.properties"
+-fi
+-
+-if [ "x$KAFKA_HEAP_OPTS" = "x" ]; then
+-    export KAFKA_HEAP_OPTS="-Xmx1G -Xms1G"
+-fi
+-
+-EXTRA_ARGS="-name kafkaServer -loggc"
+-
+-COMMAND=$1
+-case $COMMAND in
+-  -daemon)
+-    EXTRA_ARGS="-daemon "$EXTRA_ARGS
+-    shift
+-    ;;
+-  *)
+-    ;;
+-esac
+-
+-exec $base_dir/kafka-run-class.sh $EXTRA_ARGS kafka.Kafka $@
+diff --git a/bin/kafka-server-stop b/bin/kafka-server-stop
+new file mode 100755
+index 0000000..cd8160c
+--- /dev/null
++++ b/bin/kafka-server-stop
+@@ -0,0 +1,16 @@
++#!/bin/sh
++# Licensed to the Apache Software Foundation (ASF) under one or more
++# contributor license agreements.  See the NOTICE file distributed with
++# this work for additional information regarding copyright ownership.
++# The ASF licenses this file to You under the Apache License, Version 2.0
++# (the "License"); you may not use this file except in compliance with
++# the License.  You may obtain a copy of the License at
++# 
++#    http://www.apache.org/licenses/LICENSE-2.0
++# 
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
++ps ax | grep -i 'kafka\.Kafka' | grep java | grep -v grep | awk '{print $1}' | xargs kill -SIGTERM
+diff --git a/bin/kafka-server-stop.sh b/bin/kafka-server-stop.sh
+deleted file mode 100755
+index cd8160c..0000000
+--- a/bin/kafka-server-stop.sh
++++ /dev/null
+@@ -1,16 +0,0 @@
+-#!/bin/sh
+-# Licensed to the Apache Software Foundation (ASF) under one or more
+-# contributor license agreements.  See the NOTICE file distributed with
+-# this work for additional information regarding copyright ownership.
+-# The ASF licenses this file to You under the Apache License, Version 2.0
+-# (the "License"); you may not use this file except in compliance with
+-# the License.  You may obtain a copy of the License at
+-# 
+-#    http://www.apache.org/licenses/LICENSE-2.0
+-# 
+-# Unless required by applicable law or agreed to in writing, software
+-# distributed under the License is distributed on an "AS IS" BASIS,
+-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-# See the License for the specific language governing permissions and
+-# limitations under the License.
+-ps ax | grep -i 'kafka\.Kafka' | grep java | grep -v grep | awk '{print $1}' | xargs kill -SIGTERM
+diff --git a/bin/kafka-simple-consumer-shell b/bin/kafka-simple-consumer-shell
+new file mode 100755
+index 0000000..12aab60
+--- /dev/null
++++ b/bin/kafka-simple-consumer-shell
+@@ -0,0 +1,17 @@
++#!/bin/bash
++# Licensed to the Apache Software Foundation (ASF) under one or more
++# contributor license agreements.  See the NOTICE file distributed with
++# this work for additional information regarding copyright ownership.
++# The ASF licenses this file to You under the Apache License, Version 2.0
++# (the "License"); you may not use this file except in compliance with
++# the License.  You may obtain a copy of the License at
++# 
++#    http://www.apache.org/licenses/LICENSE-2.0
++# 
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
++
++exec $(dirname $0)/kafka-run-class kafka.tools.SimpleConsumerShell $@
+diff --git a/bin/kafka-simple-consumer-shell.sh b/bin/kafka-simple-consumer-shell.sh
+deleted file mode 100755
+index 9316f79..0000000
+--- a/bin/kafka-simple-consumer-shell.sh
++++ /dev/null
+@@ -1,17 +0,0 @@
+-#!/bin/bash
+-# Licensed to the Apache Software Foundation (ASF) under one or more
+-# contributor license agreements.  See the NOTICE file distributed with
+-# this work for additional information regarding copyright ownership.
+-# The ASF licenses this file to You under the Apache License, Version 2.0
+-# (the "License"); you may not use this file except in compliance with
+-# the License.  You may obtain a copy of the License at
+-# 
+-#    http://www.apache.org/licenses/LICENSE-2.0
+-# 
+-# Unless required by applicable law or agreed to in writing, software
+-# distributed under the License is distributed on an "AS IS" BASIS,
+-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-# See the License for the specific language governing permissions and
+-# limitations under the License.
+-
+-exec $(dirname $0)/kafka-run-class.sh kafka.tools.SimpleConsumerShell $@
+diff --git a/bin/kafka-topics b/bin/kafka-topics
+new file mode 100755
+index 0000000..aaa090a
+--- /dev/null
++++ b/bin/kafka-topics
+@@ -0,0 +1,17 @@
++#!/bin/bash
++# Licensed to the Apache Software Foundation (ASF) under one or more
++# contributor license agreements.  See the NOTICE file distributed with
++# this work for additional information regarding copyright ownership.
++# The ASF licenses this file to You under the Apache License, Version 2.0
++# (the "License"); you may not use this file except in compliance with
++# the License.  You may obtain a copy of the License at
++# 
++#    http://www.apache.org/licenses/LICENSE-2.0
++# 
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
++
++exec $(dirname $0)/kafka-run-class kafka.admin.TopicCommand $@
+diff --git a/bin/kafka-topics.sh b/bin/kafka-topics.sh
+deleted file mode 100755
+index b39b272..0000000
+--- a/bin/kafka-topics.sh
++++ /dev/null
+@@ -1,17 +0,0 @@
+-#!/bin/bash
+-# Licensed to the Apache Software Foundation (ASF) under one or more
+-# contributor license agreements.  See the NOTICE file distributed with
+-# this work for additional information regarding copyright ownership.
+-# The ASF licenses this file to You under the Apache License, Version 2.0
+-# (the "License"); you may not use this file except in compliance with
+-# the License.  You may obtain a copy of the License at
+-# 
+-#    http://www.apache.org/licenses/LICENSE-2.0
+-# 
+-# Unless required by applicable law or agreed to in writing, software
+-# distributed under the License is distributed on an "AS IS" BASIS,
+-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-# See the License for the specific language governing permissions and
+-# limitations under the License.
+-
+-exec $(dirname $0)/kafka-run-class.sh kafka.admin.TopicCommand $@
+diff --git a/bin/zookeeper-server-start b/bin/zookeeper-server-start
+new file mode 100755
+index 0000000..069fe99
+--- /dev/null
++++ b/bin/zookeeper-server-start
+@@ -0,0 +1,44 @@
++#!/bin/bash
++# Licensed to the Apache Software Foundation (ASF) under one or more
++# contributor license agreements.  See the NOTICE file distributed with
++# this work for additional information regarding copyright ownership.
++# The ASF licenses this file to You under the Apache License, Version 2.0
++# (the "License"); you may not use this file except in compliance with
++# the License.  You may obtain a copy of the License at
++# 
++#    http://www.apache.org/licenses/LICENSE-2.0
++# 
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
++
++if [ $# -lt 1 ];
++then
++	echo "USAGE: $0 zookeeper.properties"
++	exit 1
++fi
++base_dir=$(dirname $0)
++
++if [ "x$KAFKA_LOG4J_OPTS" = "x" ]; then
++    export KAFKA_LOG4J_OPTS="-Dlog4j.configuration=file:$base_dir/../config/log4j.properties"
++fi
++
++if [ "x$KAFKA_HEAP_OPTS" = "x" ]; then
++    export KAFKA_HEAP_OPTS="-Xmx512M -Xms512M"
++fi
++
++EXTRA_ARGS="-name zookeeper -loggc"
++
++COMMAND=$1
++case $COMMAND in
++  -daemon)
++     EXTRA_ARGS="-daemon "$EXTRA_ARGS
++     shift
++     ;;
++ *)
++     ;;
++esac
++
++exec $base_dir/kafka-run-class $EXTRA_ARGS org.apache.zookeeper.server.quorum.QuorumPeerMain $@
+diff --git a/bin/zookeeper-server-start.sh b/bin/zookeeper-server-start.sh
+deleted file mode 100755
+index d968786..0000000
+--- a/bin/zookeeper-server-start.sh
++++ /dev/null
+@@ -1,45 +0,0 @@
+-#!/bin/bash
+-# Licensed to the Apache Software Foundation (ASF) under one or more
+-# contributor license agreements.  See the NOTICE file distributed with
+-# this work for additional information regarding copyright ownership.
+-# The ASF licenses this file to You under the Apache License, Version 2.0
+-# (the "License"); you may not use this file except in compliance with
+-# the License.  You may obtain a copy of the License at
+-# 
+-#    http://www.apache.org/licenses/LICENSE-2.0
+-# 
+-# Unless required by applicable law or agreed to in writing, software
+-# distributed under the License is distributed on an "AS IS" BASIS,
+-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-# See the License for the specific language governing permissions and
+-# limitations under the License.
+-
+-if [ $# -lt 1 ];
+-then
+-	echo "USAGE: $0 zookeeper.properties"
+-	exit 1
+-fi
+-base_dir=$(dirname $0)
+-
+-if [ "x$KAFKA_LOG4J_OPTS" = "x" ]; then
+-    export KAFKA_LOG4J_OPTS="-Dlog4j.configuration=file:$base_dir/../config/log4j.properties"
+-fi
+-
+-if [ "x$KAFKA_HEAP_OPTS" = "x" ]; then
+-    export KAFKA_HEAP_OPTS="-Xmx512M -Xms512M"
+-fi
+-
+-EXTRA_ARGS="-name zookeeper -loggc"
+-
+-COMMAND=$1
+-case $COMMAND in
+-  -daemon)
+-     EXTRA_ARGS="-daemon "$EXTRA_ARGS
+-     shift
+-     ;;
+- *)
+-     ;;
+-esac
+-
+-exec $base_dir/kafka-run-class.sh $EXTRA_ARGS org.apache.zookeeper.server.quorum.QuorumPeerMain $@
+-
+diff --git a/bin/zookeeper-server-stop b/bin/zookeeper-server-stop
+new file mode 100755
+index 0000000..975d9ae
+--- /dev/null
++++ b/bin/zookeeper-server-stop
+@@ -0,0 +1,16 @@
++#!/bin/sh
++# Licensed to the Apache Software Foundation (ASF) under one or more
++# contributor license agreements.  See the NOTICE file distributed with
++# this work for additional information regarding copyright ownership.
++# The ASF licenses this file to You under the Apache License, Version 2.0
++# (the "License"); you may not use this file except in compliance with
++# the License.  You may obtain a copy of the License at
++# 
++#    http://www.apache.org/licenses/LICENSE-2.0
++# 
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
++ps ax | grep -i 'zookeeper' | grep -v grep | awk '{print $1}' | xargs kill -SIGINT
+diff --git a/bin/zookeeper-server-stop.sh b/bin/zookeeper-server-stop.sh
+deleted file mode 100755
+index 975d9ae..0000000
+--- a/bin/zookeeper-server-stop.sh
++++ /dev/null
+@@ -1,16 +0,0 @@
+-#!/bin/sh
+-# Licensed to the Apache Software Foundation (ASF) under one or more
+-# contributor license agreements.  See the NOTICE file distributed with
+-# this work for additional information regarding copyright ownership.
+-# The ASF licenses this file to You under the Apache License, Version 2.0
+-# (the "License"); you may not use this file except in compliance with
+-# the License.  You may obtain a copy of the License at
+-# 
+-#    http://www.apache.org/licenses/LICENSE-2.0
+-# 
+-# Unless required by applicable law or agreed to in writing, software
+-# distributed under the License is distributed on an "AS IS" BASIS,
+-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-# See the License for the specific language governing permissions and
+-# limitations under the License.
+-ps ax | grep -i 'zookeeper' | grep -v grep | awk '{print $1}' | xargs kill -SIGINT
+diff --git a/bin/zookeeper-shell b/bin/zookeeper-shell
+new file mode 100755
+index 0000000..6860532
+--- /dev/null
++++ b/bin/zookeeper-shell
+@@ -0,0 +1,23 @@
++#!/bin/sh
++# Licensed to the Apache Software Foundation (ASF) under one or more
++# contributor license agreements.  See the NOTICE file distributed with
++# this work for additional information regarding copyright ownership.
++# The ASF licenses this file to You under the Apache License, Version 2.0
++# (the "License"); you may not use this file except in compliance with
++# the License.  You may obtain a copy of the License at
++# 
++#    http://www.apache.org/licenses/LICENSE-2.0
++# 
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
++
++if [ $# -lt 1 ];
++then
++	echo "USAGE: $0 zookeeper_host:port[/path] [args...]"
++	exit 1
++fi
++
++exec $(dirname $0)/kafka-run-class org.apache.zookeeper.ZooKeeperMain -server "$@"
+diff --git a/bin/zookeeper-shell.sh b/bin/zookeeper-shell.sh
+deleted file mode 100755
+index 95007fa..0000000
+--- a/bin/zookeeper-shell.sh
++++ /dev/null
+@@ -1,23 +0,0 @@
+-#!/bin/sh
+-# Licensed to the Apache Software Foundation (ASF) under one or more
+-# contributor license agreements.  See the NOTICE file distributed with
+-# this work for additional information regarding copyright ownership.
+-# The ASF licenses this file to You under the Apache License, Version 2.0
+-# (the "License"); you may not use this file except in compliance with
+-# the License.  You may obtain a copy of the License at
+-# 
+-#    http://www.apache.org/licenses/LICENSE-2.0
+-# 
+-# Unless required by applicable law or agreed to in writing, software
+-# distributed under the License is distributed on an "AS IS" BASIS,
+-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-# See the License for the specific language governing permissions and
+-# limitations under the License.
+-
+-if [ $# -lt 1 ];
+-then
+-	echo "USAGE: $0 zookeeper_host:port[/path] [args...]"
+-	exit 1
+-fi
+-
+-exec $(dirname $0)/kafka-run-class.sh org.apache.zookeeper.ZooKeeperMain -server "$@"
