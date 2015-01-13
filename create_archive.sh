@@ -37,7 +37,8 @@ mkdir -p ${DESTDIR}${BINPATH}
 mkdir -p ${DESTDIR}${LIBPATH}
 mkdir -p ${DESTDIR}${SYSCONFDIR}
 
-${INSTALL_X} -o root -g root ${TMP_ARCHIVE_PATH}/bin/*.sh ${DESTDIR}${BINPATH}/
+${INSTALL_X} -o root -g root ${TMP_ARCHIVE_PATH}/bin/kafka-* ${DESTDIR}${BINPATH}/
+${INSTALL_X} -o root -g root ${TMP_ARCHIVE_PATH}/bin/zookeeper-* ${DESTDIR}${BINPATH}/
 if [ "${INCLUDE_WINDOWS_BIN}" == "yes" ]; then
     mkdir -p ${DESTDIR}${BINPATH}/windows
     ${INSTALL_X} -o root -g root ${TMP_ARCHIVE_PATH}/bin/windows/*.bat ${DESTDIR}${BINPATH}/windows/
