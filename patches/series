@@ -1,2 +1,3 @@
 lsb_layout_classpath_setup.patch
 data_dirs_in_var_lib.patch
+default_log_config_paths.patch
