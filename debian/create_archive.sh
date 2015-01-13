@@ -44,7 +44,7 @@ if [ "${INCLUDE_WINDOWS_BIN}" == "yes" ]; then
 fi
 ${INSTALL} -o root -g root ${TMP_ARCHIVE_PATH}/libs/* ${DESTDIR}${LIBPATH}/
 for path in ${TMP_ARCHIVE_PATH}/config/*; do
-    ${INSTALL} -o root -g root ${path} ${DESTDIR}${SYSCONFDIR}/`basename ${path}`.example
+    ${INSTALL} -o root -g root ${path} ${DESTDIR}${SYSCONFDIR}/`basename ${path}`
 done
 
 ln -s ./kafka_${SCALA_VERSION_SHORT}-${VERSION}.jar ${DESTDIR}${LIBPATH}/kafka.jar # symlink for unversioned access to jar
