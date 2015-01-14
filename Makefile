@@ -148,6 +148,8 @@ clean:
 	rm -rf RPM_BUILDING
 
 distclean: clean
+	git reset --hard HEAD
+	git status --ignored --porcelain | cut -d ' ' -f 2 | xargs rm -rf
 
 test:
 
