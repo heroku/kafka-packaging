@@ -55,7 +55,7 @@ exit 0
 %files
 %defattr(-,root,root)
 /usr/bin/*
-/usr/share/kafka
+/usr/share/java/kafka
 /var/log/kafka
 /etc/kafka
 
