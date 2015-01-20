@@ -21,7 +21,7 @@ else
 fi
 
 BINPATH=${PREFIX}/bin
-LIBPATH=${PREFIX}/share/kafka
+LIBPATH=${PREFIX}/share/java/kafka
 
 INSTALL="install -D -m 644"
 INSTALL_X="install -D -m 755"
