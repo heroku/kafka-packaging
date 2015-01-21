@@ -56,13 +56,9 @@ VERSION=$(shell grep version gradle.properties | awk -F= '{ print $$2 }')
 endif
 endif
 
-ifndef SCALA_VERSION
-SCALA_VERSION=$(shell test -e debian/control && grep Package debian/control | awk -F- '{ print $$3 }')
-ifeq ($SCALA_VERSION,)
-SCALA_VERSION=$(shell grep ext[.]scalaVersion scala.gradle | awk -F\' '{ print $$2 }')
+ifndef SCALA_VERSIONS
+SCALA_VERSIONS=$(shell test -e debian/control && grep Package debian/control | awk -F- '{ print $$3 }')
 endif
-endif
-SCALA_VERSION_UNDERSCORE=$(subst .,_,$(SCALA_VERSION))
 
 PACKAGE_NAME=confluent-kafka-$(VERSION)-$(SCALA_VERSION)
 
@@ -109,8 +105,6 @@ endif
 
 export APPLY_PATCHES
 export VERSION
-export SCALA_VERSION
-export DESTDIR
 export PREFIX
 export SYSCONFDIR
 export INCLUDE_WINDOWS_BIN
@@ -136,13 +130,21 @@ ifeq ($(APPLY_PATCHES),yes)
 	cat patches/series | xargs -iPATCH bash -c 'patch -p1 < patches/PATCH'
 endif
 
-kafka: gradle apply-patches
-	$(GRADLE) -g /tmp/gradleuserhome -PscalaVersion=$(SCALA_VERSION)
-	./gradlew -g /tmp/gradleuserhome -PscalaVersion=$(SCALA_VERSION) releaseTarGz_$(SCALA_VERSION_UNDERSCORE)
+kafka: gradle apply-patches $(foreach v,$(SCALA_VERSIONS),kafka-$(v))
+
+# $* is SCALA_VERSION, $(subst .,_,$*) is SCALA_VERSION_UNDERSCORE
+kafka-%:
+	$(GRADLE) -g /tmp/gradleuserhome -PscalaVersion=$*
+	./gradlew -g /tmp/gradleuserhome -PscalaVersion=$* releaseTarGz_$(subst .,_,$*)
 
 # create_archive gets the
-install: kafka
-	./create_archive.sh
+install: kafka $(foreach v,$(SCALA_VERSIONS),install-$(v))
+
+# Because of the way debian packaging invokes this, it's a pain to override some
+# variables safely. Instead, we pass the SCALA_VERSION and DESTDIR via command
+# line arguments.
+install-%:
+	./create_archive.sh $* $(CURDIR)/debian/confluent-kafka-$*
 
 clean:
 	rm -rf $(CURDIR)/gradle-*
@@ -155,4 +157,16 @@ distclean: clean
 
 test:
 
-.PHONY: clean install
+.PHONY: clean install debian-control
+
+
+# This generates the debian control file. You should only be running this from
+# the top-level directory using make -f debian/Makefile, never while in the
+# debian/ directory.
+debian-control:
+	cp debian/control.in debian/control
+	for SVERSION in $(SCALA_VERSIONS); do \
+		cat debian/control.binary.in | sed s@##SCALAVERSION##@$$SVERSION@g >> debian/control; \
+	done
+	git add debian/control
+	git commit -m "Add control file."

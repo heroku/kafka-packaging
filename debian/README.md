@@ -54,10 +54,8 @@ current `debian` branch. We'll use 0.8.2-beta as an example here:
 We need to generate the control file, selecting which Scala version we're
 building for:
 
-    $ export SCALA_VERSION=2.10.1
-    $ cat debian/control.in | sed "s@##SCALAVERSION##@${SCALA_VERSION}@g" > debian/control
-    $ git add debian/control
-    $ git commit -m "Add control file."
+    $ export SCALA_VERSIONS="2.9.1 2.9.2 2.10.1 2.11.5"
+    $ make -f debian/Makefile debian-control
 
 Now, merge in the real Kafka source code, assuming a tagged release:
 

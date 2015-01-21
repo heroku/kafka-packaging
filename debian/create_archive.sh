@@ -5,7 +5,15 @@
 
 set -e
 
-if [ -z ${VERSION} -o -z ${SCALA_VERSION} -o -z ${DESTDIR} ]; then
+# Special overrides to allow passing in Scala version-specific args
+if [ -n "$1" ]; then
+    SCALA_VERSION="$1"
+fi
+if [ -n "$2" ]; then
+    DESTDIR="$2"
+fi
+
+if [ -z "${VERSION}" -o -z "${SCALA_VERSION}" -o -z "${DESTDIR}" ]; then
     echo "VERSION, SCALA_VERSION, and DESTDIR environment variables must be set."
     exit 1
 fi
