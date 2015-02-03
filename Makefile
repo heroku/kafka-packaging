@@ -166,6 +166,9 @@ export RPM_VERSION=$(shell echo $(VERSION) | sed -e 's/-alpha[0-9]*//' -e 's/-be
 # considered earlier than any 0.8.2 final releases since those will start with
 # Version=0.8.2 Release=1)
 export RPM_RELEASE_POSTFIX=$(subst -,,$(subst $(RPM_VERSION),,$(VERSION)))
+ifneq ($(RPM_RELEASE_POSTFIX),)
+	export RPM_RELEASE_POSTFIX_UNDERSCORE=_$(RPM_RELEASE_POSTFIX)
+endif
 
 rpm: RPM_BUILDING/SOURCES/confluent-kafka-$(SCALA_VERSION)-$(RPM_VERSION).tar.gz
 	echo "Building the rpm"
@@ -183,7 +186,7 @@ rpm: RPM_BUILDING/SOURCES/confluent-kafka-$(SCALA_VERSION)-$(RPM_VERSION).tar.gz
 # installed version to generate a new archive. Note that we always regenerate
 # the symlink because the RPM_VERSION doesn't include all the version info -- it
 # can leave of things like -beta, -rc1, etc.
-RPM_BUILDING/SOURCES/confluent-kafka-$(SCALA_VERSION)-$(RPM_VERSION).tar.gz: rpm-build-area install confluent-kafka.spec.in RELEASE_$(SCALA_VERSION)_$(RPM_VERSION)_$(RPM_RELEASE_POSTFIX)
+RPM_BUILDING/SOURCES/confluent-kafka-$(SCALA_VERSION)-$(RPM_VERSION).tar.gz: rpm-build-area install confluent-kafka.spec.in RELEASE_$(SCALA_VERSION)_$(RPM_VERSION)$(RPM_RELEASE_POSTFIX_UNDERSCORE)
 	rm -rf confluent-kafka-$(SCALA_VERSION)-$(RPM_VERSION)
 	mkdir confluent-kafka-$(SCALA_VERSION)-$(RPM_VERSION)
 	cp -R $(DESTDIR)/* confluent-kafka-$(SCALA_VERSION)-$(RPM_VERSION)
