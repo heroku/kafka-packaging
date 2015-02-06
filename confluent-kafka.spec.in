@@ -24,6 +24,8 @@ Distributed by Design - Kafka has a modern cluster-centric design that offers st
 
 http://kafka.apache.org/
 
+%define __jar_repack %{nil}
+
 %pre
 
 exit 0
