@@ -1,7 +1,5 @@
 Package: confluent-kafka-##SCALAVERSION##
 Architecture: all
-Depends: java6-runtime, adduser, ${java:Depends}, ${misc:Depends}
-Recommends: ${java:Recommends}
 Description: publish-subscribe messaging rethought as a distributed commit log
  Apache Kafka is
   * Fast: A single Kafka broker can handle hundreds of megabytes of reads and
