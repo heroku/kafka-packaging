@@ -8,7 +8,7 @@ Source0: confluent-kafka-##SCALAVERSION##-%{version}.tar.gz
 URL: http://kafka.apache.org
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
 Vendor: Confluent, Inc.
-Packager: Ewen Cheslack-Postava <ewen@confluent.io>
+Packager: Confluent Packaging <packages@confluent.io>
 BuildArch: noarch
 
 Requires(pre): shadow-utils
@@ -63,5 +63,5 @@ exit 0
 [ "%{buildroot}" != "/" ] && %{__rm} -rf %{buildroot}
 
 %changelog
-* Thu Dec 11 2014 Ewen Cheslack-Postava <ewen@confluent.io>
+* Thu Dec 11 2014 Confluent Packaging <packages@confluent.io>
 - Initial import
