@@ -139,6 +139,7 @@ endif
 
 kafka: gradle apply-patches
 	$(GRADLE) -PscalaVersion=$(SCALA_VERSION)
+	./gradlew -PscalaVersion=$(SCALA_VERSION) install
 	./gradlew -PscalaVersion=$(SCALA_VERSION) releaseTarGz_$(SCALA_VERSION_UNDERSCORE)
 
 # create_archive gets the
