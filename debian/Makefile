@@ -132,7 +132,7 @@ gradle-$(GRADLE_VERSION):
 apply-patches: $(wildcard patches/*)
 ifeq ($(APPLY_PATCHES),yes)
 	git reset --hard HEAD
-	cat patches/series | xargs -iPATCH bash -c 'patch -p1 < patches/PATCH'
+	cat patches/series | xargs -IPATCH bash -c 'patch -p1 < patches/PATCH'
 endif
 
 kafka: gradle apply-patches $(foreach v,$(SCALA_VERSIONS),kafka-$(v))
