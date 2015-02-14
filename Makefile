@@ -127,7 +127,7 @@ archive: install
 gradle: gradle-$(GRADLE_VERSION)
 
 gradle-$(GRADLE_VERSION):
-	curl -O -L "https://services.gradle.org/distributions/gradle-$(GRADLE_VERSION)-bin.zip"
+	cp /tmp/gradle-$(GRADLE_VERSION)-bin.zip . || (curl -O -L "https://s3-us-west-2.amazonaws.com/confluent-packaging-tools/gradle-$(GRADLE_VERSION)-bin.zip" && cp gradle-$(GRADLE_VERSION)-bin.zip /tmp)
 	unzip gradle-$(GRADLE_VERSION)-bin.zip
 	rm -rf gradle-$(GRADLE_VERSION)-bin.zip
 
