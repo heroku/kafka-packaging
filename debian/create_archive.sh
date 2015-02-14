@@ -13,8 +13,8 @@ if [ -n "$2" ]; then
     DESTDIR="$2"
 fi
 
-if [ -z "${VERSION}" -o -z "${SCALA_VERSION}" -o -z "${DESTDIR}" ]; then
-    echo "VERSION, SCALA_VERSION, and DESTDIR environment variables must be set."
+if [ -z "${VERSION}" -o -z "${SOURCE_VERSION}" -o -z "${SCALA_VERSION}" -o -z "${DESTDIR}" ]; then
+    echo "VERSION, SOURCE_VERSION, SCALA_VERSION, and DESTDIR environment variables must be set."
     exit 1
 fi
 
@@ -37,7 +37,7 @@ TMP_ARCHIVE_PATH="kafka_archive_tmp"
 
 rm -rf ${TMP_ARCHIVE_PATH}
 mkdir -p ${TMP_ARCHIVE_PATH}
-tar -xf core/build/distributions/kafka_${SCALA_VERSION_SHORT}-${VERSION}.tgz -C ${TMP_ARCHIVE_PATH} --strip-components 1
+tar -xf core/build/distributions/kafka_${SCALA_VERSION_SHORT}-${SOURCE_VERSION}.tgz -C ${TMP_ARCHIVE_PATH} --strip-components 1
 
 rm -rf ${DESTDIR}${PREFIX}
 mkdir -p ${DESTDIR}${PREFIX}
@@ -56,9 +56,9 @@ for path in ${TMP_ARCHIVE_PATH}/config/*; do
     ${INSTALL} -o root -g root ${path} ${DESTDIR}${SYSCONFDIR}/`basename ${path}`
 done
 
-ln -s ./kafka_${SCALA_VERSION_SHORT}-${VERSION}.jar ${DESTDIR}${LIBPATH}/kafka.jar # symlink for unversioned access to jar
+ln -s ./kafka_${SCALA_VERSION_SHORT}-${SOURCE_VERSION}.jar ${DESTDIR}${LIBPATH}/kafka.jar # symlink for unversioned access to jar
 
-${INSTALL} -o root -g root ${TMP_ARCHIVE_PATH}/libs/kafka-clients-${VERSION}.jar ${DESTDIR}${LIBPATH}/
+${INSTALL} -o root -g root ${TMP_ARCHIVE_PATH}/libs/kafka-clients-${SOURCE_VERSION}.jar ${DESTDIR}${LIBPATH}/
 
 rm -rf ${TMP_ARCHIVE_PATH}
 

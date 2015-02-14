@@ -46,13 +46,17 @@ GRADLE=./gradle-$(GRADLE_VERSION)/bin/gradle
 # are required and passed to create_archive.sh as environment variables. That
 # script can also pick up some other settings (PREFIX, SYSCONFDIR) to customize
 # layout of the installation.
+# Source version *must8 be extracted from the source code since we need it to
+# use files that are generated.
+SOURCE_VERSION=$(shell grep version gradle.properties | awk -F= '{ print $$2 }')
+# Version is our own packaged version number.
 ifndef VERSION
 ifeq ($(wildcard .git),.git)
 tag=$(shell git describe --abbrev=0)
 ver=$(shell echo $(tag) | sed -e 's/kafka-//' -e 's/-incubating-candidate-[0-9]//')
 VERSION=$(ver)
 else
-VERSION=$(shell grep version gradle.properties | awk -F= '{ print $$2 }')
+VERSION=$(SOURCE_VERSION)
 endif
 endif
 
@@ -104,6 +108,7 @@ INCLUDE_WINDOWS_BIN=$(DEFAULT_INCLUDE_WINDOWS_BIN)
 endif
 
 export APPLY_PATCHES
+export SOURCE_VERSION
 export VERSION
 export PREFIX
 export SYSCONFDIR
@@ -120,7 +125,7 @@ archive: install
 gradle: gradle-$(GRADLE_VERSION)
 
 gradle-$(GRADLE_VERSION):
-	curl -O -L "https://services.gradle.org/distributions/gradle-$(GRADLE_VERSION)-bin.zip"
+	cp /tmp/gradle-$(GRADLE_VERSION)-bin.zip . || (curl -O -L "https://s3-us-west-2.amazonaws.com/confluent-packaging-tools/gradle-$(GRADLE_VERSION)-bin.zip" && cp gradle-$(GRADLE_VERSION)-bin.zip /tmp)
 	unzip gradle-$(GRADLE_VERSION)-bin.zip
 	rm -rf gradle-$(GRADLE_VERSION)-bin.zip
 
@@ -135,6 +140,7 @@ kafka: gradle apply-patches $(foreach v,$(SCALA_VERSIONS),kafka-$(v))
 # $* is SCALA_VERSION, $(subst .,_,$*) is SCALA_VERSION_UNDERSCORE
 kafka-%:
 	$(GRADLE) -g /tmp/gradleuserhome -PscalaVersion=$*
+	./gradlew -g /tmp/gradleuserhome -PscalaVersion=$* install
 	./gradlew -g /tmp/gradleuserhome -PscalaVersion=$* releaseTarGz_$(subst .,_,$*)
 
 # create_archive gets the
