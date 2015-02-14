@@ -46,13 +46,17 @@ GRADLE=./gradle-$(GRADLE_VERSION)/bin/gradle
 # are required and passed to create_archive.sh as environment variables. That
 # script can also pick up some other settings (PREFIX, SYSCONFDIR) to customize
 # layout of the installation.
+# Source version *must8 be extracted from the source code since we need it to
+# use files that are generated.
+SOURCE_VERSION=$(shell grep version gradle.properties | awk -F= '{ print $$2 }')
+# Version is our own packaged version number.
 ifndef VERSION
 ifeq ($(wildcard .git),.git)
 tag=$(shell git describe --abbrev=0)
 ver=$(shell echo $(tag) | sed -e 's/kafka-//' -e 's/-incubating-candidate-[0-9]//')
 VERSION=$(ver)
 else
-VERSION=$(shell grep version gradle.properties | awk -F= '{ print $$2 }')
+VERSION=$(SOURCE_VERSION)
 endif
 endif
 
@@ -105,6 +109,7 @@ INCLUDE_WINDOWS_BIN=$(DEFAULT_INCLUDE_WINDOWS_BIN)
 endif
 
 export APPLY_PATCHES
+export SOURCE_VERSION
 export VERSION
 export SCALA_VERSION
 export DESTDIR
