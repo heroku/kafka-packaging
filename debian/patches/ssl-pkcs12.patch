@@ -1,0 +1,388 @@
+commit 233df91a881393efb91bfdb39653c1130b60c20d
+Author: Lou Kamenov <lkamenov@salesforce.com>
+Date:   Tue Apr 21 13:18:05 2015 -0400
+
+    add p12 initializer for pkcs12
+    
+    Conflicts:
+    	core/src/main/scala/kafka/network/security/SSLSocketChannel.scala
+
+diff --git a/clients/src/main/java/org/apache/kafka/common/network/security/AuthConfig.java b/clients/src/main/java/org/apache/kafka/common/network/security/AuthConfig.java
+index 99a35df..4e83f45 100644
+--- a/clients/src/main/java/org/apache/kafka/common/network/security/AuthConfig.java
++++ b/clients/src/main/java/org/apache/kafka/common/network/security/AuthConfig.java
+@@ -65,4 +65,4 @@ public class AuthConfig {
+     public String getTruststorePassword() {
+         return props.getProperty("truststorePwd");
+     }
+-}
++}
+\ No newline at end of file
+diff --git a/config/server.properties b/config/server.properties
+index 70a8cb0..8617cd4 100644
+--- a/config/server.properties
++++ b/config/server.properties
+@@ -4,9 +4,9 @@
+ # The ASF licenses this file to You under the Apache License, Version 2.0
+ # (the "License"); you may not use this file except in compliance with
+ # the License.  You may obtain a copy of the License at
+-# 
++#
+ #    http://www.apache.org/licenses/LICENSE-2.0
+-# 
++#
+ # Unless required by applicable law or agreed to in writing, software
+ # distributed under the License is distributed on an "AS IS" BASIS,
+ # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+@@ -25,7 +25,7 @@ broker.id=0
+ port=9092
+ 
+ # Hostname the broker will bind to. If not set, the server will bind to all interfaces
+-#host.name=localhost
++host.name=localhost
+ 
+ # Hostname the broker will advertise to producers and consumers. If not set, it uses the
+ # value for "host.name" if configured.  Otherwise, it will use the value returned from
+@@ -37,14 +37,14 @@ port=9092
+ #advertised.port=<port accessible by clients>
+ 
+ # SSL or plaintext
+-secure=false
++secure=true
+ 
+ # Security config
+ security.config.file=config/server.security.properties
+ 
+ # The number of threads handling network requests
+ num.network.threads=3
+- 
++
+ # The number of threads doing disk I/O
+ num.io.threads=8
+ 
+@@ -75,11 +75,11 @@ num.recovery.threads.per.data.dir=1
+ ############################# Log Flush Policy #############################
+ 
+ # Messages are immediately written to the filesystem but by default we only fsync() to sync
+-# the OS cache lazily. The following configurations control the flush of data to disk. 
++# the OS cache lazily. The following configurations control the flush of data to disk.
+ # There are a few important trade-offs here:
+ #    1. Durability: Unflushed data may be lost if you are not using replication.
+ #    2. Latency: Very large flush intervals may lead to latency spikes when the flush does occur as there will be a lot of data to flush.
+-#    3. Throughput: The flush is generally the most expensive operation, and a small flush interval may lead to exceessive seeks. 
++#    3. Throughput: The flush is generally the most expensive operation, and a small flush interval may lead to exceessive seeks.
+ # The settings below allow one to configure the flush policy to flush data after a period of time or
+ # every N messages (or both). This can be done globally and overridden on a per-topic basis.
+ 
+@@ -106,7 +106,7 @@ log.retention.hours=168
+ # The maximum size of a log segment file. When this size is reached a new log segment will be created.
+ log.segment.bytes=1073741824
+ 
+-# The interval at which log segments are checked to see if they can be deleted according 
++# The interval at which log segments are checked to see if they can be deleted according
+ # to the retention policies
+ log.retention.check.interval.ms=300000
+ 
+diff --git a/config/server.security.properties b/config/server.security.properties
+index 0bcbef1..9a2fe2f 100644
+--- a/config/server.security.properties
++++ b/config/server.security.properties
+@@ -18,10 +18,10 @@
+ keystore.type=jks
+ 
+ # Request client auth
+-want.client.auth=true
++want.client.auth=false
+ 
+ # Require client auth
+-need.client.auth=true
++need.client.auth=false
+ 
+ # Keystore file
+ keystore=config/server.keystore
+diff --git a/core/src/main/scala/kafka/network/security/KeyStores.scala b/core/src/main/scala/kafka/network/security/KeyStores.scala
+index 706209e..7bdf2f7 100644
+--- a/core/src/main/scala/kafka/network/security/KeyStores.scala
++++ b/core/src/main/scala/kafka/network/security/KeyStores.scala
+@@ -18,6 +18,8 @@
+ package kafka.network.security
+ 
+ import kafka.network.security.store.JKSInitializer
++import kafka.network.security.store.P12Initializer
++
+ import kafka.common.UnknownKeyStoreException
+ import javax.net.ssl.SSLContext
+ 
+@@ -29,6 +31,7 @@ object KeyStores {
+   def getKeyStore(name: String): StoreInitializer = {
+     name.toLowerCase match {
+       case JKSInitializer.name => JKSInitializer
++      case P12Initializer.name => P12Initializer
+       case _ => throw new UnknownKeyStoreException("%s is an unknown key store".format(name))
+     }
+   }
+diff --git a/core/src/main/scala/kafka/network/security/SSLSocketChannel.scala b/core/src/main/scala/kafka/network/security/SSLSocketChannel.scala
+index 1145d2c..fe44836 100644
+--- a/core/src/main/scala/kafka/network/security/SSLSocketChannel.scala
++++ b/core/src/main/scala/kafka/network/security/SSLSocketChannel.scala
+@@ -319,7 +319,7 @@ class SSLSocketChannel(val underlying: SocketChannel, val sslEngine: SSLEngine)
+         writeRaw(myNetData)
+         myNetData.remaining > 0
+       } else mustWrite
+-    }    
++    }
+     def readIfReadyAndNeeded(mustRead: Boolean): Boolean = {
+       if ((o & SelectionKey.OP_READ) != 0) {
+         if (readRaw() < 0) {
+diff --git a/core/src/main/scala/kafka/network/security/store/P12Initializer.scala b/core/src/main/scala/kafka/network/security/store/P12Initializer.scala
+new file mode 100644
+index 0000000..4396160
+--- /dev/null
++++ b/core/src/main/scala/kafka/network/security/store/P12Initializer.scala
+@@ -0,0 +1,61 @@
++/**
++ * Licensed to the Apache Software Foundation (ASF) under one or more
++ * contributor license agreements.  See the NOTICE file distributed with
++ * this work for additional information regarding copyright ownership.
++ * The ASF licenses this file to You under the Apache License, Version 2.0
++ * (the "License"); you may not use this file except in compliance with
++ * the License.  You may obtain a copy of the License at
++ *
++ * http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++
++package kafka.network.security.store
++
++import java.io.FileInputStream
++import javax.net.ssl._
++import kafka.network.security.{StoreInitializer, AuthConfig}
++
++object P12Initializer extends StoreInitializer {
++  val name = "pkcs12"
++
++  def initialize(config: AuthConfig) = {
++    val tms = config.truststorePwd match {
++      case pw: String =>
++        val ts = java.security.KeyStore.getInstance("PKCS12")
++        val fis: FileInputStream = new FileInputStream(config.truststore)
++        ts.load(fis, pw.toCharArray)
++        fis.close()
++
++        val tmf = TrustManagerFactory.getInstance("SunX509")
++        tmf.init(ts)
++        tmf.getTrustManagers
++      case _ => null
++    }
++    val kms = config.keystorePwd match {
++      case pw: String =>
++        val ks = java.security.KeyStore.getInstance("PKCS12")
++        val fis: FileInputStream = new FileInputStream(config.keystore)
++        ks.load(fis, pw.toCharArray)
++        fis.close()
++
++        val kmf = KeyManagerFactory.getInstance("SunX509")
++        kmf.init(ks, if (config.keyPwd != null) config.keyPwd.toCharArray else pw.toCharArray)
++        kmf.getKeyManagers
++      case _ => null
++    }
++
++    initContext(tms, kms)
++  }
++
++  private def initContext(tms: Array[TrustManager], kms: Array[KeyManager]): SSLContext = {
++    val authContext = SSLContext.getInstance("TLS")
++    authContext.init(kms, tms, null)
++    authContext
++  }
++}
+diff --git a/gradlew.bat b/gradlew.bat
+index 8a0b282..aec9973 100644
+--- a/gradlew.bat
++++ b/gradlew.bat
+@@ -1,90 +1,90 @@
+-@if "%DEBUG%" == "" @echo off
+-@rem ##########################################################################
+-@rem
+-@rem  Gradle startup script for Windows
+-@rem
+-@rem ##########################################################################
+-
+-@rem Set local scope for the variables with windows NT shell
+-if "%OS%"=="Windows_NT" setlocal
+-
+-@rem Add default JVM options here. You can also use JAVA_OPTS and GRADLE_OPTS to pass JVM options to this script.
+-set DEFAULT_JVM_OPTS=
+-
+-set DIRNAME=%~dp0
+-if "%DIRNAME%" == "" set DIRNAME=.
+-set APP_BASE_NAME=%~n0
+-set APP_HOME=%DIRNAME%
+-
+-@rem Find java.exe
+-if defined JAVA_HOME goto findJavaFromJavaHome
+-
+-set JAVA_EXE=java.exe
+-%JAVA_EXE% -version >NUL 2>&1
+-if "%ERRORLEVEL%" == "0" goto init
+-
+-echo.
+-echo ERROR: JAVA_HOME is not set and no 'java' command could be found in your PATH.
+-echo.
+-echo Please set the JAVA_HOME variable in your environment to match the
+-echo location of your Java installation.
+-
+-goto fail
+-
+-:findJavaFromJavaHome
+-set JAVA_HOME=%JAVA_HOME:"=%
+-set JAVA_EXE=%JAVA_HOME%/bin/java.exe
+-
+-if exist "%JAVA_EXE%" goto init
+-
+-echo.
+-echo ERROR: JAVA_HOME is set to an invalid directory: %JAVA_HOME%
+-echo.
+-echo Please set the JAVA_HOME variable in your environment to match the
+-echo location of your Java installation.
+-
+-goto fail
+-
+-:init
+-@rem Get command-line arguments, handling Windowz variants
+-
+-if not "%OS%" == "Windows_NT" goto win9xME_args
+-if "%@eval[2+2]" == "4" goto 4NT_args
+-
+-:win9xME_args
+-@rem Slurp the command line arguments.
+-set CMD_LINE_ARGS=
+-set _SKIP=2
+-
+-:win9xME_args_slurp
+-if "x%~1" == "x" goto execute
+-
+-set CMD_LINE_ARGS=%*
+-goto execute
+-
+-:4NT_args
+-@rem Get arguments from the 4NT Shell from JP Software
+-set CMD_LINE_ARGS=%$
+-
+-:execute
+-@rem Setup the command line
+-
+-set CLASSPATH=%APP_HOME%\gradle\wrapper\gradle-wrapper.jar
+-
+-@rem Execute Gradle
+-"%JAVA_EXE%" %DEFAULT_JVM_OPTS% %JAVA_OPTS% %GRADLE_OPTS% "-Dorg.gradle.appname=%APP_BASE_NAME%" -classpath "%CLASSPATH%" org.gradle.wrapper.GradleWrapperMain %CMD_LINE_ARGS%
+-
+-:end
+-@rem End local scope for the variables with windows NT shell
+-if "%ERRORLEVEL%"=="0" goto mainEnd
+-
+-:fail
+-rem Set variable GRADLE_EXIT_CONSOLE if you need the _script_ return code instead of
+-rem the _cmd.exe /c_ return code!
+-if  not "" == "%GRADLE_EXIT_CONSOLE%" exit 1
+-exit /b 1
+-
+-:mainEnd
+-if "%OS%"=="Windows_NT" endlocal
+-
+-:omega
++@if "%DEBUG%" == "" @echo off
++@rem ##########################################################################
++@rem
++@rem  Gradle startup script for Windows
++@rem
++@rem ##########################################################################
++
++@rem Set local scope for the variables with windows NT shell
++if "%OS%"=="Windows_NT" setlocal
++
++@rem Add default JVM options here. You can also use JAVA_OPTS and GRADLE_OPTS to pass JVM options to this script.
++set DEFAULT_JVM_OPTS=
++
++set DIRNAME=%~dp0
++if "%DIRNAME%" == "" set DIRNAME=.
++set APP_BASE_NAME=%~n0
++set APP_HOME=%DIRNAME%
++
++@rem Find java.exe
++if defined JAVA_HOME goto findJavaFromJavaHome
++
++set JAVA_EXE=java.exe
++%JAVA_EXE% -version >NUL 2>&1
++if "%ERRORLEVEL%" == "0" goto init
++
++echo.
++echo ERROR: JAVA_HOME is not set and no 'java' command could be found in your PATH.
++echo.
++echo Please set the JAVA_HOME variable in your environment to match the
++echo location of your Java installation.
++
++goto fail
++
++:findJavaFromJavaHome
++set JAVA_HOME=%JAVA_HOME:"=%
++set JAVA_EXE=%JAVA_HOME%/bin/java.exe
++
++if exist "%JAVA_EXE%" goto init
++
++echo.
++echo ERROR: JAVA_HOME is set to an invalid directory: %JAVA_HOME%
++echo.
++echo Please set the JAVA_HOME variable in your environment to match the
++echo location of your Java installation.
++
++goto fail
++
++:init
++@rem Get command-line arguments, handling Windowz variants
++
++if not "%OS%" == "Windows_NT" goto win9xME_args
++if "%@eval[2+2]" == "4" goto 4NT_args
++
++:win9xME_args
++@rem Slurp the command line arguments.
++set CMD_LINE_ARGS=
++set _SKIP=2
++
++:win9xME_args_slurp
++if "x%~1" == "x" goto execute
++
++set CMD_LINE_ARGS=%*
++goto execute
++
++:4NT_args
++@rem Get arguments from the 4NT Shell from JP Software
++set CMD_LINE_ARGS=%$
++
++:execute
++@rem Setup the command line
++
++set CLASSPATH=%APP_HOME%\gradle\wrapper\gradle-wrapper.jar
++
++@rem Execute Gradle
++"%JAVA_EXE%" %DEFAULT_JVM_OPTS% %JAVA_OPTS% %GRADLE_OPTS% "-Dorg.gradle.appname=%APP_BASE_NAME%" -classpath "%CLASSPATH%" org.gradle.wrapper.GradleWrapperMain %CMD_LINE_ARGS%
++
++:end
++@rem End local scope for the variables with windows NT shell
++if "%ERRORLEVEL%"=="0" goto mainEnd
++
++:fail
++rem Set variable GRADLE_EXIT_CONSOLE if you need the _script_ return code instead of
++rem the _cmd.exe /c_ return code!
++if  not "" == "%GRADLE_EXIT_CONSOLE%" exit 1
++exit /b 1
++
++:mainEnd
++if "%OS%"=="Windows_NT" endlocal
++
++:omega
