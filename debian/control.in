@@ -1,7 +1,7 @@
 Source: confluent-kafka
 Section: misc
 Priority: optional
-Maintainer: Confluent Packaging <packages@confluent.io>
+Maintainer: Maciek Sakrejda (Heroku) <maciek@heroku.com>
 Build-Depends: debhelper (>= 9), java6-jdk, javahelper (>= 0.40),
  git, make, curl, zip, unzip
 Standards-Version: 3.9.3

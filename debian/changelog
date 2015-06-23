@@ -1,3 +1,9 @@
+confluent-kafka (0.8.2.1-1heroku1) unstable; urgency=low
+
+  * Release 0.8.2.1
+
+ -- Maciek Sakrejda (Heroku) <maciek@heroku.com>  Tue, 23 Jun 2015 14:52:39 +0000
+
 confluent-kafka (0.8.2.0-1) unstable; urgency=low
 
   * Release 0.8.2.0
