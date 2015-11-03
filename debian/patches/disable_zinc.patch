@@ -1,8 +1,8 @@
 diff --git a/build.gradle b/build.gradle
-index c3e6bb8..331e5e6 100644
+index 1c3bd63..d71fe17 100644
 --- a/build.gradle
 +++ b/build.gradle
-@@ -128,8 +128,6 @@ subprojects {
+@@ -179,8 +179,6 @@ subprojects {
    }
  
    tasks.withType(ScalaCompile) {
@@ -10,13 +10,12 @@ index c3e6bb8..331e5e6 100644
 -
      configure(scalaCompileOptions.forkOptions) {
        memoryMaximumSize = '1g'
-       jvmArgs = ['-XX:MaxPermSize=512m']
-@@ -223,8 +221,6 @@ project(':core') {
-       testCompile "org.scalatest:scalatest_$scalaVersion:1.8"
-     }
+       jvmArgs = ['-XX:MaxPermSize=512m', '-Xss2m']
+@@ -274,7 +272,6 @@ project(':core') {
+     testCompile project(':clients').sourceSets.test.output
+     testCompile 'org.apache.hadoop:hadoop-minikdc:2.7.1'
      testRuntime "$slf4jlog4j"
--
--    zinc 'com.typesafe.zinc:zinc:0.3.1'
+-    zinc 'com.typesafe.zinc:zinc:0.3.7'
    }
  
    configurations {
