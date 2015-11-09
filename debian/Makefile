@@ -137,11 +137,15 @@ endif
 
 kafka: gradle apply-patches $(foreach v,$(SCALA_VERSIONS),kafka-$(v))
 
+# Note: We skip signing here because, when deploying artifacts (in a later packaging step),
+#       we will actually perform the signing.  Skipping the signing here also means we do not
+#       need to have the credentials etc. configured at this point in the packaging pipeline.
+#
 # $* is SCALA_VERSION, $(subst .,_,$*) is SCALA_VERSION_UNDERSCORE
 kafka-%:
 	$(GRADLE) -g /tmp/gradleuserhome -PscalaVersion=$*
-	./gradlew -g /tmp/gradleuserhome -PscalaVersion=$* install
-	./gradlew -g /tmp/gradleuserhome -PscalaVersion=$* releaseTarGz_$(subst .,_,$*)
+	./gradlew -g /tmp/gradleuserhome -Dorg.gradle.project.skipSigning=true -PscalaVersion=$* install
+	./gradlew -g /tmp/gradleuserhome -Dorg.gradle.project.skipSigning=true -PscalaVersion=$* releaseTarGz_$(subst .,_,$*)
 
 # create_archive gets the
 install: kafka $(foreach v,$(SCALA_VERSIONS),install-$(v))
