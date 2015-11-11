@@ -1,8 +1,8 @@
 diff --git a/build.gradle b/build.gradle
-index c694c59..96eaec2 100644
+index d99eeec..0c722dd 100644
 --- a/build.gradle
 +++ b/build.gradle
-@@ -179,8 +179,6 @@ subprojects {
+@@ -181,8 +181,6 @@ subprojects {
    }
  
    tasks.withType(ScalaCompile) {
@@ -11,7 +11,7 @@ index c694c59..96eaec2 100644
      configure(scalaCompileOptions.forkOptions) {
        memoryMaximumSize = '1g'
        jvmArgs = ['-XX:MaxPermSize=512m', '-Xss2m']
-@@ -274,7 +272,6 @@ project(':core') {
+@@ -276,7 +274,6 @@ project(':core') {
      testCompile project(':clients').sourceSets.test.output
      testCompile 'org.apache.hadoop:hadoop-minikdc:2.7.1'
      testRuntime "$slf4jlog4j"
