@@ -2,7 +2,7 @@ Source: confluent-kafka
 Section: misc
 Priority: optional
 Maintainer: Confluent Packaging <packages@confluent.io>
-Build-Depends: debhelper (>= 9), java6-jdk, javahelper (>= 0.40),
+Build-Depends: debhelper (>= 9), java7-jdk, javahelper (>= 0.40),
  git, make, curl, zip, unzip
 Standards-Version: 3.9.3
 Homepage: http://kafka.apache.org
