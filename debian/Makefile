@@ -46,7 +46,7 @@ GRADLE=./gradle-$(GRADLE_VERSION)/bin/gradle
 # are required and passed to create_archive.sh as environment variables. That
 # script can also pick up some other settings (PREFIX, SYSCONFDIR) to customize
 # layout of the installation.
-# Source version *must8 be extracted from the source code since we need it to
+# Source version *must* be extracted from the source code since we need it to
 # use files that are generated.
 SOURCE_VERSION=$(shell grep version gradle.properties | awk -F= '{ print $$2 }')
 # Version is our own packaged version number.
@@ -114,6 +114,9 @@ export PREFIX
 export SYSCONFDIR
 export INCLUDE_WINDOWS_BIN
 export CREATE_VAR_LOG_KAFKA=yes
+export PS_PACKAGES
+export PS_CLIENT_PACKAGE
+export CONFLUENT_VERSION
 
 all: install
 
