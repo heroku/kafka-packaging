@@ -194,3 +194,5 @@ debian-control:
 
 patch-series:
 	cp debian/patches/$(PATCH_SERIES_TEMPLATE) debian/patches/series
+	git add debian/patches/series
+	git commit -m "Created patches/series"
