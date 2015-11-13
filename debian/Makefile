@@ -113,9 +113,9 @@ PS_ENABLED=$(DEFAULT_PS_ENABLED)
 endif
 
 ifeq ($(PS_ENABLED),yes)
-PATCH_SERIES=series_proactive_support
+PATCH_SERIES=series.proactive_support.in
 else
-PATCH_SERIES=series
+PATCH_SERIES=series.in
 endif
 
 export APPLY_PATCHES
@@ -147,7 +147,7 @@ gradle-$(GRADLE_VERSION):
 apply-patches: $(wildcard patches/*)
 ifeq ($(APPLY_PATCHES),yes)
 	git reset --hard HEAD
-	cat patches/$(PATCH_SERIES) | xargs -IPATCH bash -c 'patch -p1 < patches/PATCH'
+	cat patches/series | xargs -IPATCH bash -c 'patch -p1 < patches/PATCH'
 endif
 
 kafka: gradle apply-patches $(foreach v,$(SCALA_VERSIONS),kafka-$(v))
@@ -191,3 +191,6 @@ debian-control:
 	done
 	git add debian/control
 	git commit -m "Add control file."
+
+patch-series:
+	cp debian/patches/$(PATCH_SERIES_TEMPLATE) debian/patch/series
