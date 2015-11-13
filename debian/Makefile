@@ -193,4 +193,4 @@ debian-control:
 	git commit -m "Add control file."
 
 patch-series:
-	cp debian/patches/$(PATCH_SERIES_TEMPLATE) debian/patch/series
+	cp debian/patches/$(PATCH_SERIES_TEMPLATE) debian/patches/series
