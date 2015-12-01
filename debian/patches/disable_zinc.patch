@@ -1,5 +1,5 @@
 diff --git a/build.gradle b/build.gradle
-index d99eeec..0c722dd 100644
+index a259cb8..dcceda0 100644
 --- a/build.gradle
 +++ b/build.gradle
 @@ -181,8 +181,6 @@ subprojects {
