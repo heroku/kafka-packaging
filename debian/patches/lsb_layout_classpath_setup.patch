@@ -7,7 +7,7 @@ index 88d575b..1071af6 100755
  CLASSPATH=$CLASSPATH:$base_dir/libs/*
  
 +# classpath addition for releases with LSB-style layout
-+CLASSPATH=$CLASSPATH:$base_dir/share/java/kafka/*
++CLASSPATH=$CLASSPATH:$base_dir/share/java/kafka-0.9.0.0/*
 +
  for file in $base_dir/core/build/libs/kafka_${SCALA_BINARY_VERSION}*.jar;
  do
