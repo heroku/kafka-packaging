@@ -28,8 +28,9 @@ else
     SCALA_VERSION_SHORT=`echo ${SCALA_VERSION} | awk -F. '{print $1"."$2}'`
 fi
 
-BINPATH=${PREFIX}/bin/kafka-${SOURCE_VERSION}
-LIBPATH=${PREFIX}/share/java/kafka-${SOURCE_VERSION}
+SOURCE_VERSION_PATH_ENTRY=$(echo "$SOURCE_VERSION" | cut -f 1 -d '-')
+BINPATH=${PREFIX}/bin/kafka-${SOURCE_VERSION_PATH_ENTRY}
+LIBPATH=${PREFIX}/share/java/kafka-${SOURCE_VERSION_PATH_ENTRY}
 
 INSTALL="install -D -m 644"
 INSTALL_X="install -D -m 755"
