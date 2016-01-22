@@ -18,8 +18,10 @@ if [ -z "${VERSION}" -o -z "${SOURCE_VERSION}" -o -z "${SCALA_VERSION}" -o -z "$
     exit 1
 fi
 
+SOURCE_VERSION_PATH_ENTRY=$(echo "$SOURCE_VERSION" | cut -f 1 -d '-')
+
 if [ -z ${SYSCONFDIR} ]; then
-    SYSCONFDIR="${PREFIX}/etc/kafka"
+    SYSCONFDIR="${PREFIX}/etc/kafka-${SOURCE_VERSION_PATH_ENTRY}"
 fi
 
 if `echo ${SCALA_VERSION} | grep '^2[.]8[.]' >/dev/null` || `echo ${SCALA_VERSION} | grep '^2[.]9[.]' >/dev/null`; then
@@ -28,7 +30,6 @@ else
     SCALA_VERSION_SHORT=`echo ${SCALA_VERSION} | awk -F. '{print $1"."$2}'`
 fi
 
-SOURCE_VERSION_PATH_ENTRY=$(echo "$SOURCE_VERSION" | cut -f 1 -d '-')
 BINPATH=${PREFIX}/bin/kafka-${SOURCE_VERSION_PATH_ENTRY}
 LIBPATH=${PREFIX}/share/java/kafka-${SOURCE_VERSION_PATH_ENTRY}
 

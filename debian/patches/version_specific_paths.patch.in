@@ -1,3 +1,29 @@
+diff --git a/config/server.properties b/config/server.properties
+index 80ee2fc..8595ec8 100644
+--- a/config/server.properties
++++ b/config/server.properties
+@@ -57,7 +57,7 @@ socket.request.max.bytes=104857600
+ ############################# Log Basics #############################
+ 
+ # A comma seperated list of directories under which to store log files
+-log.dirs=/tmp/kafka-logs
++log.dirs=/var/lib/kafka-##KAFKA_VERSION##
+ 
+ # The default number of log partitions per topic. More partitions allow greater
+ # parallelism for consumption, but this will also result in more files across
+diff --git a/config/zookeeper.properties b/config/zookeeper.properties
+index 74cbf90..3ae7169 100644
+--- a/config/zookeeper.properties
++++ b/config/zookeeper.properties
+@@ -13,7 +13,7 @@
+ # See the License for the specific language governing permissions and
+ # limitations under the License.
+ # the directory where the snapshot is stored.
+-dataDir=/tmp/zookeeper
++dataDir=/var/lib/zookeeper-##KAFKA_VERSION##
+ # the port at which the clients will connect
+ clientPort=2181
+ # disable the per-ip limit on the number of connections since this is a non-production config
 diff --git a/bin/connect-distributed b/bin/connect-distributed
 index 354c3cc..65c5f8b 100755
 --- a/bin/connect-distributed
@@ -7,8 +33,8 @@ index 354c3cc..65c5f8b 100755
  
  if [ "x$KAFKA_LOG4J_OPTS" = "x" ]; then
 -    export KAFKA_LOG4J_OPTS="-Dlog4j.configuration=file:$base_dir/../config/connect-log4j.properties"
-+  LOG4J_CONFIG_NORMAL_INSTALL="/etc/kafka/connect-log4j.properties"
-+  LOG4J_CONFIG_ZIP_INSTALL="$base_dir/../etc/kafka/connect-log4j.properties"
++  LOG4J_CONFIG_NORMAL_INSTALL="/etc/kafka-##KAFKA_VERSION##/connect-log4j.properties"
++  LOG4J_CONFIG_ZIP_INSTALL="$base_dir/../etc/kafka-##KAFKA_VERSION##/connect-log4j.properties"
 +  if [ -e "$LOG4J_CONFIG_NORMAL_INSTALL" ]; then # Normal install layout
 +    KAFKA_LOG4J_OPTS="-Dlog4j.configuration=file:${LOG4J_CONFIG_NORMAL_INSTALL}"
 +  elif [ -e "${LOG4J_CONFIG_ZIP_INSTALL}" ]; then # Simple zip file layout
@@ -29,8 +55,8 @@ index 85904f7..ca58fe6 100755
  
  if [ "x$KAFKA_LOG4J_OPTS" = "x" ]; then
 -    export KAFKA_LOG4J_OPTS="-Dlog4j.configuration=file:$base_dir/../config/connect-log4j.properties"
-+  LOG4J_CONFIG_NORMAL_INSTALL="/etc/kafka/connect-log4j.properties"
-+  LOG4J_CONFIG_ZIP_INSTALL="$base_dir/../etc/kafka/connect-log4j.properties"
++  LOG4J_CONFIG_NORMAL_INSTALL="/etc/kafka-##KAFKA_VERSION##/connect-log4j.properties"
++  LOG4J_CONFIG_ZIP_INSTALL="$base_dir/../etc/kafka-##KAFKA_VERSION##/connect-log4j.properties"
 +  if [ -e "$LOG4J_CONFIG_NORMAL_INSTALL" ]; then # Normal install layout
 +    KAFKA_LOG4J_OPTS="-Dlog4j.configuration=file:${LOG4J_CONFIG_NORMAL_INSTALL}"
 +  elif [ -e "${LOG4J_CONFIG_ZIP_INSTALL}" ]; then # Simple zip file layout
@@ -51,8 +77,8 @@ index 1fb4eff..10dee75 100755
  if [ -z "$KAFKA_LOG4J_OPTS" ]; then
    # Log to console. This is a tool.
 -  KAFKA_LOG4J_OPTS="-Dlog4j.configuration=file:$base_dir/config/tools-log4j.properties"
-+  LOG4J_CONFIG_NORMAL_INSTALL="/etc/kafka/tools-log4j.properties"
-+  LOG4J_CONFIG_ZIP_INSTALL="$base_dir/etc/kafka/tools-log4j.properties"
++  LOG4J_CONFIG_NORMAL_INSTALL="/etc/kafka-##KAFKA_VERSION##/tools-log4j.properties"
++  LOG4J_CONFIG_ZIP_INSTALL="$base_dir/etc/kafka-##KAFKA_VERSION##/tools-log4j.properties"
 +  if [ -e "$LOG4J_CONFIG_NORMAL_INSTALL" ]; then # Normal install layout
 +    KAFKA_LOG4J_OPTS="-Dlog4j.configuration=file:${LOG4J_CONFIG_NORMAL_INSTALL}"
 +  elif [ -e "${LOG4J_CONFIG_ZIP_INSTALL}" ]; then # Simple zip file layout
@@ -72,8 +98,8 @@ index e74a0ae..5c364fb 100755
  
  if [ "x$KAFKA_LOG4J_OPTS" = "x" ]; then
 -    export KAFKA_LOG4J_OPTS="-Dlog4j.configuration=file:$base_dir/../config/log4j.properties"
-+  LOG4J_CONFIG_NORMAL_INSTALL="/etc/kafka/log4j.properties"
-+  LOG4J_CONFIG_ZIP_INSTALL="$base_dir/../etc/kafka/log4j.properties"
++  LOG4J_CONFIG_NORMAL_INSTALL="/etc/kafka-##KAFKA_VERSION##/log4j.properties"
++  LOG4J_CONFIG_ZIP_INSTALL="$base_dir/../etc/kafka-##KAFKA_VERSION##/log4j.properties"
 +  if [ -e "$LOG4J_CONFIG_NORMAL_INSTALL" ]; then # Normal install layout
 +    KAFKA_LOG4J_OPTS="-Dlog4j.configuration=file:${LOG4J_CONFIG_NORMAL_INSTALL}"
 +  elif [ -e "${LOG4J_CONFIG_ZIP_INSTALL}" ]; then # Simple zip file layout
@@ -95,8 +121,8 @@ index f5b8faa..64dc42f 100644
  rem Log4j settings
  IF ["%KAFKA_LOG4J_OPTS%"] EQU [""] (
 -	set KAFKA_LOG4J_OPTS=-Dlog4j.configuration=file:%BASE_DIR%/config/tools-log4j.properties
-+	if exists %~dp0../../etc/kafka/tools-log4j.properties (
-+		set KAFKA_LOG4J_OPTS=-Dlog4j.configuration=file:%~dp0../../etc/kafka/tools-log4j.properties
++	if exists %~dp0../../etc/kafka-##KAFKA_VERSION##/tools-log4j.properties (
++		set KAFKA_LOG4J_OPTS=-Dlog4j.configuration=file:%~dp0../../etc/kafka-##KAFKA_VERSION##/tools-log4j.properties
 +	) else (
 +		set KAFKA_LOG4J_OPTS=-Dlog4j.configuration=file:%BASE_DIR%/config/tools-log4j.properties
 +	)
@@ -112,8 +138,8 @@ index 6a5aa9f..ae56b48 100644
  
  SetLocal
 -set KAFKA_LOG4J_OPTS=-Dlog4j.configuration=file:%~dp0../../config/log4j.properties
-+if exists %~dp0../../etc/kafka/log4j.properties (
-+	set KAFKA_LOG4J_OPTS=-Dlog4j.configuration=file:%~dp0../../etc/kafka/log4j.properties
++if exists %~dp0../../etc/kafka-##KAFKA_VERSION##/log4j.properties (
++	set KAFKA_LOG4J_OPTS=-Dlog4j.configuration=file:%~dp0../../etc/kafka-##KAFKA_VERSION##/log4j.properties
 +) else (
 +	set KAFKA_LOG4J_OPTS=-Dlog4j.configuration=file:%~dp0../../config/log4j.properties
 +)
@@ -129,8 +155,8 @@ index 9836283..9a31936 100644
  
  SetLocal
 -set KAFKA_LOG4J_OPTS=-Dlog4j.configuration=file:%~dp0../../config/log4j.properties
-+if exists %~dp0../../etc/kafka/log4j.properties (
-+	set KAFKA_LOG4J_OPTS=-Dlog4j.configuration=file:%~dp0../../etc/kafka/log4j.properties
++if exists %~dp0../../etc/kafka-##KAFKA_VERSION##/log4j.properties (
++	set KAFKA_LOG4J_OPTS=-Dlog4j.configuration=file:%~dp0../../etc/kafka-##KAFKA_VERSION##/log4j.properties
 +) else (
 +	set KAFKA_LOG4J_OPTS=-Dlog4j.configuration=file:%~dp0../../config/log4j.properties
 +)
@@ -146,8 +172,8 @@ index fbbc8f6..755d753 100755
  
  if [ "x$KAFKA_LOG4J_OPTS" = "x" ]; then
 -    export KAFKA_LOG4J_OPTS="-Dlog4j.configuration=file:$base_dir/../config/log4j.properties"
-+  LOG4J_CONFIG_NORMAL_INSTALL="/etc/kafka/log4j.properties"
-+  LOG4J_CONFIG_ZIP_INSTALL="$base_dir/../etc/kafka/log4j.properties"
++  LOG4J_CONFIG_NORMAL_INSTALL="/etc/kafka-##KAFKA_VERSION##/log4j.properties"
++  LOG4J_CONFIG_ZIP_INSTALL="$base_dir/../etc/kafka-##KAFKA_VERSION##/log4j.properties"
 +  if [ -e "$LOG4J_CONFIG_NORMAL_INSTALL" ]; then # Normal install layout
 +    KAFKA_LOG4J_OPTS="-Dlog4j.configuration=file:${LOG4J_CONFIG_NORMAL_INSTALL}"
 +  elif [ -e "${LOG4J_CONFIG_ZIP_INSTALL}" ]; then # Simple zip file layout
@@ -160,3 +186,16 @@ index fbbc8f6..755d753 100755
  
  if [ "x$KAFKA_HEAP_OPTS" = "x" ]; then
      export KAFKA_HEAP_OPTS="-Xmx512M -Xms512M"
+diff --git a/bin/kafka-run-class b/bin/kafka-run-class
+index 1071af6..1fb4eff 100755
+--- a/bin/kafka-run-class
++++ b/bin/kafka-run-class
+@@ -102,7 +102,7 @@ fi
+ 
+ # Log directory to use
+ if [ "x$LOG_DIR" = "x" ]; then
+-    LOG_DIR="$base_dir/logs"
++    LOG_DIR="/var/log/kafka-##KAFKA_VERSION##"
+ fi
+ 
+ # Log4j settings
