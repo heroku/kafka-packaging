@@ -1,4 +1,4 @@
 remove_sh_from_bin_filenames.patch
 kafka_connect_classpath_additions.patch
-debian/patches/version_specific_paths.patch
+version_specific_paths.patch
 confluent_proactive_support.patch
