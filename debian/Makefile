@@ -49,6 +49,7 @@ GRADLE=./gradle-$(GRADLE_VERSION)/bin/gradle
 # Source version *must8 be extracted from the source code since we need it to
 # use files that are generated.
 SOURCE_VERSION=$(shell grep version gradle.properties | awk -F= '{ print $$2 }')
+SOURCE_VERSION_NO_SUFFIX=$(shell echo $SOURCE_VERSION | cut -d '-' -f 1)
 # Version is our own packaged version number.
 ifndef VERSION
 ifeq ($(wildcard .git),.git)
@@ -176,3 +177,8 @@ debian-control:
 	done
 	git add debian/control
 	git commit -m "Add control file."
+
+patch-series:
+	cat debian/patches/version_specific_paths.patch.in | sed s@##KAFKA_VERSION##@$$SOURCE_VERSION_NO_SUFFIX@g >> debian/patches/version_specific_paths.patch; \
+	git add debian/patches
+	git commit -m "generate version specific patch"
