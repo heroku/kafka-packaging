@@ -1,3 +1,4 @@
 remove_sh_from_bin_filenames.patch
 version_specific_paths.patch
 confluent_proactive_support.patch
+standard_build_layout.patch
