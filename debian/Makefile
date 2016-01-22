@@ -49,7 +49,7 @@ GRADLE=./gradle-$(GRADLE_VERSION)/bin/gradle
 # Source version *must8 be extracted from the source code since we need it to
 # use files that are generated.
 SOURCE_VERSION=$(shell grep version gradle.properties | awk -F= '{ print $$2 }')
-SOURCE_VERSION_NO_SUFFIX=$(shell echo $SOURCE_VERSION | cut -d '-' -f 1)
+SOURCE_VERSION_PATH_ENTRY=$(shell grep version gradle.properties | awk -F= '{ print $$2 }' | cut -f 1 -d '-')
 # Version is our own packaged version number.
 ifndef VERSION
 ifeq ($(wildcard .git),.git)
@@ -74,7 +74,7 @@ PACKAGE_NAME=confluent-kafka-$(VERSION)-$(SCALA_VERSION)
 DEFAULT_APPLY_PATCHES=no
 DEFAULT_DESTDIR=$(CURDIR)/BUILD/
 DEFAULT_PREFIX=/usr
-DEFAULT_SYSCONFDIR=/etc/kafka-$(SOURCE_VERSION_NO_SUFFIX)
+DEFAULT_SYSCONFDIR=/etc/kafka-$(SOURCE_VERSION_PATH_ENTRY)
 DEFAULT_INCLUDE_WINDOWS_BIN=no
 
 
@@ -179,6 +179,6 @@ debian-control:
 	git commit -m "Add control file."
 
 patch-series:
-	cat debian/patches/version_specific_paths.patch.in | sed s@##KAFKA_VERSION##@$$SOURCE_VERSION_NO_SUFFIX@g >> debian/patches/version_specific_paths.patch; \
+	cat debian/patches/version_specific_paths.patch.in | sed s@##KAFKA_VERSION##@$$SOURCE_VERSION_PATH_ENTRY@g >> debian/patches/version_specific_paths.patch; \
 	git add debian/patches
 	git commit -m "generate version specific patch"
