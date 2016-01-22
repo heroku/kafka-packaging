@@ -60,17 +60,3 @@ index ca58fe6..d1b7a30 100755
  
 +export CLASSPATH
  exec $(dirname $0)/kafka-run-class org.apache.kafka.connect.cli.ConnectStandalone "$@"
-diff --git a/bin/kafka-run-class b/bin/kafka-run-class
-index 88d575b..1071af6 100755
---- a/bin/kafka-run-class
-+++ b/bin/kafka-run-class
-@@ -81,6 +81,9 @@ done
- # classpath addition for release
- CLASSPATH=$CLASSPATH:$base_dir/libs/*
- 
-+# classpath addition for releases with LSB-style layout
-+CLASSPATH=$CLASSPATH:$base_dir/share/java/kafka-##KAFKA_VERSION##/*
-+
- for file in $base_dir/core/build/libs/kafka_${SCALA_BINARY_VERSION}*.jar;
- do
-   CLASSPATH=$CLASSPATH:$file
