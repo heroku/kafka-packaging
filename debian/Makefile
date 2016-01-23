@@ -201,7 +201,7 @@ debian-control:
 	git commit -m "Add control file."
 
 patch-series:
-	cat debian/patches/version_specific_paths.patch.in | sed s@##KAFKA_VERSION##@$$SOURCE_VERSION_PATH_ENTRY@g >> debian/patches/version_specific_paths.patch; \
+	cat debian/patches/version_specific_paths.patch.in | sed s@##KAFKA_VERSION##@$(SOURCE_VERSION_PATH_ENTRY)@g >> debian/patches/version_specific_paths.patch
 	git add debian/patches
 	git commit -m "generate version specific patch"
 	cp debian/patches/$(PATCH_SERIES_TEMPLATE) debian/patches/series
