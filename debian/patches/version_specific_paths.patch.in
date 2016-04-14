@@ -1,31 +1,5 @@
-diff --git a/config/server.properties b/config/server.properties
-index 80ee2fc..8595ec8 100644
---- a/config/server.properties
-+++ b/config/server.properties
-@@ -57,7 +57,7 @@ socket.request.max.bytes=104857600
- ############################# Log Basics #############################
- 
- # A comma seperated list of directories under which to store log files
--log.dirs=/tmp/kafka-logs
-+log.dirs=/var/lib/kafka-##KAFKA_VERSION##
- 
- # The default number of log partitions per topic. More partitions allow greater
- # parallelism for consumption, but this will also result in more files across
-diff --git a/config/zookeeper.properties b/config/zookeeper.properties
-index 74cbf90..3ae7169 100644
---- a/config/zookeeper.properties
-+++ b/config/zookeeper.properties
-@@ -13,7 +13,7 @@
- # See the License for the specific language governing permissions and
- # limitations under the License.
- # the directory where the snapshot is stored.
--dataDir=/tmp/zookeeper
-+dataDir=/var/lib/zookeeper-##KAFKA_VERSION##
- # the port at which the clients will connect
- clientPort=2181
- # disable the per-ip limit on the number of connections since this is a non-production config
 diff --git a/bin/connect-distributed b/bin/connect-distributed
-index 354c3cc..65c5f8b 100755
+index d9f6325..a20437a 100755
 --- a/bin/connect-distributed
 +++ b/bin/connect-distributed
 @@ -17,7 +17,16 @@
@@ -45,9 +19,9 @@ index 354c3cc..65c5f8b 100755
  fi
 +export KAFKA_LOG4J_OPTS
  
- exec $(dirname $0)/kafka-run-class org.apache.kafka.connect.cli.ConnectDistributed "$@"
+ exec $(dirname $0)/kafka-run-class.sh org.apache.kafka.connect.cli.ConnectDistributed "$@"
 diff --git a/bin/connect-standalone b/bin/connect-standalone
-index 85904f7..ca58fe6 100755
+index a14df86..3eacd90 100755
 --- a/bin/connect-standalone
 +++ b/bin/connect-standalone
 @@ -17,7 +17,16 @@
@@ -67,12 +41,29 @@ index 85904f7..ca58fe6 100755
  fi
 +export KAFKA_LOG4J_OPTS
  
- exec $(dirname $0)/kafka-run-class org.apache.kafka.connect.cli.ConnectStandalone "$@"
+ exec $(dirname $0)/kafka-run-class.sh org.apache.kafka.connect.cli.ConnectStandalone "$@"
 diff --git a/bin/kafka-run-class b/bin/kafka-run-class
-index 1fb4eff..10dee75 100755
+index c2b3368..fcd4373 100755
 --- a/bin/kafka-run-class
 +++ b/bin/kafka-run-class
-@@ -108,7 +108,15 @@ fi
+@@ -71,6 +71,9 @@ done
+ # classpath addition for release
+ CLASSPATH=$CLASSPATH:$base_dir/libs/*
+ 
++# classpath addition for releases with LSB-style layout
++CLASSPATH=$CLASSPATH:$base_dir/../share/java/kafka-##KAFKA_VERSION##/*
++
+ for file in $base_dir/core/build/libs/kafka_${SCALA_BINARY_VERSION}*.jar;
+ do
+   CLASSPATH=$CLASSPATH:$file
+@@ -89,13 +92,21 @@ fi
+ 
+ # Log directory to use
+ if [ "x$LOG_DIR" = "x" ]; then
+-    LOG_DIR="$base_dir/logs"
++    LOG_DIR="/var/log/kafka-##KAFKA_VERSION##"
+ fi
+ 
  # Log4j settings
  if [ -z "$KAFKA_LOG4J_OPTS" ]; then
    # Log to console. This is a tool.
@@ -90,7 +81,7 @@ index 1fb4eff..10dee75 100755
    # create logs directory
    if [ ! -d "$LOG_DIR" ]; then
 diff --git a/bin/kafka-server-start b/bin/kafka-server-start
-index e74a0ae..5c364fb 100755
+index 36c2a0d..7412705 100755
 --- a/bin/kafka-server-start
 +++ b/bin/kafka-server-start
 @@ -22,8 +22,17 @@ fi
@@ -113,10 +104,10 @@ index e74a0ae..5c364fb 100755
  if [ "x$KAFKA_HEAP_OPTS" = "x" ]; then
      export KAFKA_HEAP_OPTS="-Xmx1G -Xms1G"
 diff --git a/bin/windows/kafka-run-class.bat b/bin/windows/kafka-run-class.bat
-index f5b8faa..64dc42f 100644
+index cd72bfd..8658699 100644
 --- a/bin/windows/kafka-run-class.bat
 +++ b/bin/windows/kafka-run-class.bat
-@@ -87,7 +87,11 @@ IF ["%JMX_PORT%"] NEQ [""] (
+@@ -77,7 +77,11 @@ IF ["%JMX_PORT%"] NEQ [""] (
  
  rem Log4j settings
  IF ["%KAFKA_LOG4J_OPTS%"] EQU [""] (
@@ -130,7 +121,7 @@ index f5b8faa..64dc42f 100644
  
  rem Generic jvm settings you want to add
 diff --git a/bin/windows/kafka-server-start.bat b/bin/windows/kafka-server-start.bat
-index 6a5aa9f..ae56b48 100644
+index 6a5aa9f..e4320fb 100644
 --- a/bin/windows/kafka-server-start.bat
 +++ b/bin/windows/kafka-server-start.bat
 @@ -20,7 +20,11 @@ IF [%1] EQU [] (
@@ -147,7 +138,7 @@ index 6a5aa9f..ae56b48 100644
  %~dp0kafka-run-class.bat kafka.Kafka %*
  EndLocal
 diff --git a/bin/windows/zookeeper-server-start.bat b/bin/windows/zookeeper-server-start.bat
-index 9836283..9a31936 100644
+index 9836283..b68701f 100644
 --- a/bin/windows/zookeeper-server-start.bat
 +++ b/bin/windows/zookeeper-server-start.bat
 @@ -20,7 +20,11 @@ IF [%1] EQU [] (
@@ -164,7 +155,7 @@ index 9836283..9a31936 100644
  %~dp0kafka-run-class.bat org.apache.zookeeper.server.quorum.QuorumPeerMain %*
  EndLocal
 diff --git a/bin/zookeeper-server-start b/bin/zookeeper-server-start
-index fbbc8f6..755d753 100755
+index ecf7c07..2e250c2 100755
 --- a/bin/zookeeper-server-start
 +++ b/bin/zookeeper-server-start
 @@ -22,8 +22,17 @@ fi
@@ -186,30 +177,29 @@ index fbbc8f6..755d753 100755
  
  if [ "x$KAFKA_HEAP_OPTS" = "x" ]; then
      export KAFKA_HEAP_OPTS="-Xmx512M -Xms512M"
-diff --git a/bin/kafka-run-class b/bin/kafka-run-class
-index 1071af6..1fb4eff 100755
---- a/bin/kafka-run-class
-+++ b/bin/kafka-run-class
-@@ -102,7 +102,7 @@ fi
+diff --git a/config/server.properties b/config/server.properties
+index ddb695a..054a5ed 100644
+--- a/config/server.properties
++++ b/config/server.properties
+@@ -57,7 +57,7 @@ socket.request.max.bytes=104857600
+ ############################# Log Basics #############################
  
- # Log directory to use
- if [ "x$LOG_DIR" = "x" ]; then
--    LOG_DIR="$base_dir/logs"
-+    LOG_DIR="/var/log/kafka-##KAFKA_VERSION##"
- fi
+ # A comma seperated list of directories under which to store log files
+-log.dirs=/tmp/kafka-logs
++log.dirs=/var/lib/kafka-##KAFKA_VERSION##
  
- # Log4j settings
-diff --git a/bin/kafka-run-class b/bin/kafka-run-class
-index 88d575b..1071af6 100755
---- a/bin/kafka-run-class
-+++ b/bin/kafka-run-class
-@@ -81,6 +81,9 @@ done
- # classpath addition for release
- CLASSPATH=$CLASSPATH:$base_dir/libs/*
- 
-+# classpath addition for releases with LSB-style layout
-+CLASSPATH=$CLASSPATH:$base_dir/../share/java/kafka-##KAFKA_VERSION##/*
-+
- for file in $base_dir/core/build/libs/kafka_${SCALA_BINARY_VERSION}*.jar;
- do
-   CLASSPATH=$CLASSPATH:$file
+ # The default number of log partitions per topic. More partitions allow greater
+ # parallelism for consumption, but this will also result in more files across
+diff --git a/config/zookeeper.properties b/config/zookeeper.properties
+index 74cbf90..ab20736 100644
+--- a/config/zookeeper.properties
++++ b/config/zookeeper.properties
+@@ -13,7 +13,7 @@
+ # See the License for the specific language governing permissions and
+ # limitations under the License.
+ # the directory where the snapshot is stored.
+-dataDir=/tmp/zookeeper
++dataDir=/var/lib/zookeeper-##KAFKA_VERSION##
+ # the port at which the clients will connect
+ clientPort=2181
+ # disable the per-ip limit on the number of connections since this is a non-production config
