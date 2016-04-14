@@ -740,10 +740,10 @@ index 4960836..0000000
 -exec $(dirname $0)/kafka-run-class.sh kafka.tools.ReplicaVerificationTool "$@"
 diff --git a/bin/kafka-run-class b/bin/kafka-run-class
 new file mode 100755
-index 0000000..c2b3368
+index 0000000..f45d8d4
 --- /dev/null
 +++ b/bin/kafka-run-class
-@@ -0,0 +1,168 @@
+@@ -0,0 +1,205 @@
 +#!/bin/bash
 +# Licensed to the Apache Software Foundation (ASF) under one or more
 +# contributor license agreements.  See the NOTICE file distributed with
@@ -769,7 +769,7 @@ index 0000000..c2b3368
 +base_dir=$(dirname $0)/..
 +
 +if [ -z "$SCALA_VERSION" ]; then
-+	SCALA_VERSION=2.10.5
++	SCALA_VERSION=2.10.6
 +fi
 +
 +if [ -z "$SCALA_BINARY_VERSION" ]; then
@@ -793,6 +793,21 @@ index 0000000..c2b3368
 +  CLASSPATH=$CLASSPATH:$file
 +done
 +
++for file in $base_dir/streams/build/libs/kafka-streams*.jar;
++do
++  CLASSPATH=$CLASSPATH:$file
++done
++
++for file in $base_dir/streams/examples/build/libs/kafka-streams-examples*.jar;
++do
++  CLASSPATH=$CLASSPATH:$file
++done
++
++for file in $base_dir/streams/build/dependant-libs-${SCALA_VERSION}/rocksdb*.jar;
++do
++  CLASSPATH=$CLASSPATH:$file
++done
++
 +for file in $base_dir/tools/build/libs/kafka-tools*.jar;
 +do
 +  CLASSPATH=$CLASSPATH:$file
@@ -803,7 +818,7 @@ index 0000000..c2b3368
 +  CLASSPATH=$CLASSPATH:$dir/*
 +done
 +
-+for cc_pkg in "api" "runtime" "file" "json"
++for cc_pkg in "api" "runtime" "file" "json" "tools"
 +do
 +  for file in $base_dir/connect/${cc_pkg}/build/libs/connect-${cc_pkg}*.jar;
 +  do
@@ -854,6 +869,28 @@ index 0000000..c2b3368
 +# Generic jvm settings you want to add
 +if [ -z "$KAFKA_OPTS" ]; then
 +  KAFKA_OPTS=""
++fi
++
++# Set Debug options if enabled
++if [ "x$KAFKA_DEBUG" != "x" ]; then
++
++    # Use default ports
++    DEFAULT_JAVA_DEBUG_PORT="5005"
++
++    if [ -z "$JAVA_DEBUG_PORT" ]; then
++        JAVA_DEBUG_PORT="$DEFAULT_JAVA_DEBUG_PORT"
++    fi
++
++    # Use the defaults if JAVA_DEBUG_OPTS was not set
++    DEFAULT_JAVA_DEBUG_OPTS="-agentlib:jdwp=transport=dt_socket,server=y,suspend=${DEBUG_SUSPEND_FLAG:-n},address=$JAVA_DEBUG_PORT"
++    if [ -z "$JAVA_DEBUG_OPTS" ]; then
++        JAVA_DEBUG_OPTS="$DEFAULT_JAVA_DEBUG_OPTS"
++    fi
++
++
++
++    echo "Enabling Java debug options: $JAVA_DEBUG_OPTS"
++    KAFKA_OPTS="$JAVA_DEBUG_OPTS $KAFKA_OPTS"
 +fi
 +
 +# Which java to use
@@ -914,10 +951,10 @@ index 0000000..c2b3368
 +fi
 diff --git a/bin/kafka-run-class.sh b/bin/kafka-run-class.sh
 deleted file mode 100755
-index c2b3368..0000000
+index f45d8d4..0000000
 --- a/bin/kafka-run-class.sh
 +++ /dev/null
-@@ -1,168 +0,0 @@
+@@ -1,205 +0,0 @@
 -#!/bin/bash
 -# Licensed to the Apache Software Foundation (ASF) under one or more
 -# contributor license agreements.  See the NOTICE file distributed with
@@ -943,7 +980,7 @@ index c2b3368..0000000
 -base_dir=$(dirname $0)/..
 -
 -if [ -z "$SCALA_VERSION" ]; then
--	SCALA_VERSION=2.10.5
+-	SCALA_VERSION=2.10.6
 -fi
 -
 -if [ -z "$SCALA_BINARY_VERSION" ]; then
@@ -967,6 +1004,21 @@ index c2b3368..0000000
 -  CLASSPATH=$CLASSPATH:$file
 -done
 -
+-for file in $base_dir/streams/build/libs/kafka-streams*.jar;
+-do
+-  CLASSPATH=$CLASSPATH:$file
+-done
+-
+-for file in $base_dir/streams/examples/build/libs/kafka-streams-examples*.jar;
+-do
+-  CLASSPATH=$CLASSPATH:$file
+-done
+-
+-for file in $base_dir/streams/build/dependant-libs-${SCALA_VERSION}/rocksdb*.jar;
+-do
+-  CLASSPATH=$CLASSPATH:$file
+-done
+-
 -for file in $base_dir/tools/build/libs/kafka-tools*.jar;
 -do
 -  CLASSPATH=$CLASSPATH:$file
@@ -977,7 +1029,7 @@ index c2b3368..0000000
 -  CLASSPATH=$CLASSPATH:$dir/*
 -done
 -
--for cc_pkg in "api" "runtime" "file" "json"
+-for cc_pkg in "api" "runtime" "file" "json" "tools"
 -do
 -  for file in $base_dir/connect/${cc_pkg}/build/libs/connect-${cc_pkg}*.jar;
 -  do
@@ -1028,6 +1080,28 @@ index c2b3368..0000000
 -# Generic jvm settings you want to add
 -if [ -z "$KAFKA_OPTS" ]; then
 -  KAFKA_OPTS=""
+-fi
+-
+-# Set Debug options if enabled
+-if [ "x$KAFKA_DEBUG" != "x" ]; then
+-
+-    # Use default ports
+-    DEFAULT_JAVA_DEBUG_PORT="5005"
+-
+-    if [ -z "$JAVA_DEBUG_PORT" ]; then
+-        JAVA_DEBUG_PORT="$DEFAULT_JAVA_DEBUG_PORT"
+-    fi
+-
+-    # Use the defaults if JAVA_DEBUG_OPTS was not set
+-    DEFAULT_JAVA_DEBUG_OPTS="-agentlib:jdwp=transport=dt_socket,server=y,suspend=${DEBUG_SUSPEND_FLAG:-n},address=$JAVA_DEBUG_PORT"
+-    if [ -z "$JAVA_DEBUG_OPTS" ]; then
+-        JAVA_DEBUG_OPTS="$DEFAULT_JAVA_DEBUG_OPTS"
+-    fi
+-
+-
+-
+-    echo "Enabling Java debug options: $JAVA_DEBUG_OPTS"
+-    KAFKA_OPTS="$JAVA_DEBUG_OPTS $KAFKA_OPTS"
 -fi
 -
 -# Which java to use
@@ -1188,10 +1262,10 @@ index 36c2a0d..0000000
 -exec $base_dir/kafka-run-class.sh $EXTRA_ARGS kafka.Kafka "$@"
 diff --git a/bin/kafka-server-stop b/bin/kafka-server-stop
 new file mode 100755
-index 0000000..cd8160c
+index 0000000..f75ded7
 --- /dev/null
 +++ b/bin/kafka-server-stop
-@@ -0,0 +1,16 @@
+@@ -0,0 +1,24 @@
 +#!/bin/sh
 +# Licensed to the Apache Software Foundation (ASF) under one or more
 +# contributor license agreements.  See the NOTICE file distributed with
@@ -1207,13 +1281,21 @@ index 0000000..cd8160c
 +# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 +# See the License for the specific language governing permissions and
 +# limitations under the License.
-+ps ax | grep -i 'kafka\.Kafka' | grep java | grep -v grep | awk '{print $1}' | xargs kill -SIGTERM
++PIDS=$(ps ax | grep -i 'kafka\.Kafka' | grep java | grep -v grep | awk '{print $1}')
++
++if [ -z "$PIDS" ]; then
++  echo "No kafka server to stop"
++  exit 1
++else 
++  kill -SIGTERM $PIDS
++fi
++
 diff --git a/bin/kafka-server-stop.sh b/bin/kafka-server-stop.sh
 deleted file mode 100755
-index cd8160c..0000000
+index f75ded7..0000000
 --- a/bin/kafka-server-stop.sh
 +++ /dev/null
-@@ -1,16 +0,0 @@
+@@ -1,24 +0,0 @@
 -#!/bin/sh
 -# Licensed to the Apache Software Foundation (ASF) under one or more
 -# contributor license agreements.  See the NOTICE file distributed with
@@ -1229,7 +1311,15 @@ index cd8160c..0000000
 -# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 -# See the License for the specific language governing permissions and
 -# limitations under the License.
--ps ax | grep -i 'kafka\.Kafka' | grep java | grep -v grep | awk '{print $1}' | xargs kill -SIGTERM
+-PIDS=$(ps ax | grep -i 'kafka\.Kafka' | grep java | grep -v grep | awk '{print $1}')
+-
+-if [ -z "$PIDS" ]; then
+-  echo "No kafka server to stop"
+-  exit 1
+-else 
+-  kill -SIGTERM $PIDS
+-fi
+-
 diff --git a/bin/kafka-simple-consumer-shell b/bin/kafka-simple-consumer-shell
 new file mode 100755
 index 0000000..27e386a
@@ -1474,7 +1564,7 @@ index 722bde7..0000000
 -exec $(dirname $0)/kafka-run-class.sh kafka.admin.ZkSecurityMigrator "$@"
 diff --git a/bin/zookeeper-server-start b/bin/zookeeper-server-start
 new file mode 100755
-index 0000000..ecf7c07
+index 0000000..4287774
 --- /dev/null
 +++ b/bin/zookeeper-server-start
 @@ -0,0 +1,44 @@
@@ -1496,7 +1586,7 @@ index 0000000..ecf7c07
 +
 +if [ $# -lt 1 ];
 +then
-+	echo "USAGE: $0 zookeeper.properties"
++	echo "USAGE: $0 [-daemon] zookeeper.properties"
 +	exit 1
 +fi
 +base_dir=$(dirname $0)
@@ -1524,7 +1614,7 @@ index 0000000..ecf7c07
 +exec $base_dir/kafka-run-class.sh $EXTRA_ARGS org.apache.zookeeper.server.quorum.QuorumPeerMain "$@"
 diff --git a/bin/zookeeper-server-start.sh b/bin/zookeeper-server-start.sh
 deleted file mode 100755
-index ecf7c07..0000000
+index 4287774..0000000
 --- a/bin/zookeeper-server-start.sh
 +++ /dev/null
 @@ -1,44 +0,0 @@
@@ -1546,7 +1636,7 @@ index ecf7c07..0000000
 -
 -if [ $# -lt 1 ];
 -then
--	echo "USAGE: $0 zookeeper.properties"
+-	echo "USAGE: $0 [-daemon] zookeeper.properties"
 -	exit 1
 -fi
 -base_dir=$(dirname $0)
@@ -1574,10 +1664,10 @@ index ecf7c07..0000000
 -exec $base_dir/kafka-run-class.sh $EXTRA_ARGS org.apache.zookeeper.server.quorum.QuorumPeerMain "$@"
 diff --git a/bin/zookeeper-server-stop b/bin/zookeeper-server-stop
 new file mode 100755
-index 0000000..975d9ae
+index 0000000..07c7910
 --- /dev/null
 +++ b/bin/zookeeper-server-stop
-@@ -0,0 +1,16 @@
+@@ -0,0 +1,24 @@
 +#!/bin/sh
 +# Licensed to the Apache Software Foundation (ASF) under one or more
 +# contributor license agreements.  See the NOTICE file distributed with
@@ -1593,13 +1683,21 @@ index 0000000..975d9ae
 +# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 +# See the License for the specific language governing permissions and
 +# limitations under the License.
-+ps ax | grep -i 'zookeeper' | grep -v grep | awk '{print $1}' | xargs kill -SIGINT
++PIDS=$(ps ax | grep java | grep -i QuorumPeerMain | grep -v grep | awk '{print $1}')
++
++if [ -z "$PIDS" ]; then
++  echo "No zookeeper server to stop"
++  exit 1
++else
++  kill -SIGTERM $PIDS
++fi
++
 diff --git a/bin/zookeeper-server-stop.sh b/bin/zookeeper-server-stop.sh
 deleted file mode 100755
-index 975d9ae..0000000
+index 07c7910..0000000
 --- a/bin/zookeeper-server-stop.sh
 +++ /dev/null
-@@ -1,16 +0,0 @@
+@@ -1,24 +0,0 @@
 -#!/bin/sh
 -# Licensed to the Apache Software Foundation (ASF) under one or more
 -# contributor license agreements.  See the NOTICE file distributed with
@@ -1615,7 +1713,15 @@ index 975d9ae..0000000
 -# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 -# See the License for the specific language governing permissions and
 -# limitations under the License.
--ps ax | grep -i 'zookeeper' | grep -v grep | awk '{print $1}' | xargs kill -SIGINT
+-PIDS=$(ps ax | grep java | grep -i QuorumPeerMain | grep -v grep | awk '{print $1}')
+-
+-if [ -z "$PIDS" ]; then
+-  echo "No zookeeper server to stop"
+-  exit 1
+-else
+-  kill -SIGTERM $PIDS
+-fi
+-
 diff --git a/bin/zookeeper-shell b/bin/zookeeper-shell
 new file mode 100755
 index 0000000..95007fa
