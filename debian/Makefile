@@ -49,7 +49,7 @@ GRADLE=./gradle-$(GRADLE_VERSION)/bin/gradle
 # Source version *must* be extracted from the source code since we need it to
 # use files that are generated.
 SOURCE_VERSION=$(shell grep version gradle.properties | awk -F= '{ print $$2 }')
-SOURCE_VERSION_PATH_ENTRY=$(shell grep version gradle.properties | awk -F= '{ print $$2 }' | cut -f 1 -d '-')
+SOURCE_VERSION_PATH_ENTRY=$(shell grep 'version=' gradle.properties | awk -F= '{ print $$2 }' | cut -f 1 -d '-')
 # Version is our own packaged version number.
 ifndef VERSION
 ifeq ($(wildcard .git),.git)
