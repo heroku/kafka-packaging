@@ -193,7 +193,7 @@ test:
 # the top-level directory using make -f debian/Makefile, never while in the
 # debian/ directory.
 debian-control:
-	cp debian/control.in debian/control
+	cat debian/control.in | sed s@##KAFKAVERSION##@$(VERSION)@g >> debian/control
 	for SVERSION in $(SCALA_VERSIONS); do \
 		cat debian/control.binary.in | sed s@##SCALAVERSION##@$$SVERSION@g | sed s@##KAFKAVERSION##@$(VERSION)@g >> debian/control; \
 	done
