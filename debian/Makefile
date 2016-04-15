@@ -195,7 +195,7 @@ test:
 debian-control:
 	cp debian/control.in debian/control
 	for SVERSION in $(SCALA_VERSIONS); do \
-		cat debian/control.binary.in | sed s@##SCALAVERSION##@$$SVERSION@g >> debian/control; \
+		cat debian/control.binary.in | sed s@##SCALAVERSION##@$$SVERSION@g | sed s@##KAFKAVERSION##@$$SOURCE_VERSION@g >> debian/control; \
 	done
 	git add debian/control
 	git commit -m "Add control file."

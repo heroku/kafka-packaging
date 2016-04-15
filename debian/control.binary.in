@@ -1,4 +1,4 @@
-Package: confluent-kafka-##SCALAVERSION##
+Package: confluent-kafka-##KAFKAVERSION##-##SCALAVERSION##
 Architecture: all
 Description: publish-subscribe messaging rethought as a distributed commit log
  Apache Kafka is
