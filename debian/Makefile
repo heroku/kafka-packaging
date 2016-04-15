@@ -173,7 +173,7 @@ install: kafka $(foreach v,$(SCALA_VERSIONS),install-$(v))
 # variables safely. Instead, we pass the SCALA_VERSION and DESTDIR via command
 # line arguments.
 install-%:
-	./create_archive.sh $* $(CURDIR)/debian/confluent-kafka-$*
+	./create_archive.sh $* $(CURDIR)/debian/confluent-kafka-$(VERSION)-$*
 
 clean:
 	rm -rf $(CURDIR)/gradle-*
