@@ -18,7 +18,7 @@ if [ -z "${VERSION}" -o -z "${SOURCE_VERSION}" -o -z "${SCALA_VERSION}" -o -z "$
     exit 1
 fi
 
-SOURCE_VERSION_PATH_ENTRY=$(echo "$SOURCE_VERSION" | cut -f 1 -d '-')
+SOURCE_VERSION_PATH_ENTRY=$(echo "$SOURCE_VERSION")
 
 if [ -z ${SYSCONFDIR} ]; then
     SYSCONFDIR="${PREFIX}/etc/kafka-${SOURCE_VERSION_PATH_ENTRY}"
