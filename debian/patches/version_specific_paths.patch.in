@@ -43,20 +43,20 @@ index 85904f7..b895deb 100755
  
  exec $(dirname $0)/kafka-run-class org.apache.kafka.connect.cli.ConnectStandalone "$@"
 diff --git a/bin/kafka-run-class b/bin/kafka-run-class
-index f45d8d4..fe3df20 100755
+index 688cced..f3999a3 100755
 --- a/bin/kafka-run-class
 +++ b/bin/kafka-run-class
-@@ -86,6 +86,9 @@ done
- # classpath addition for release
- CLASSPATH=$CLASSPATH:$base_dir/libs/*
+@@ -125,6 +125,9 @@ do
+   fi
+ done
  
 +# classpath addition for releases with LSB-style layout
 +CLASSPATH=$CLASSPATH:$base_dir/../share/java/kafka-##KAFKA_VERSION##/*
 +
  for file in $base_dir/core/build/libs/kafka_${SCALA_BINARY_VERSION}*.jar;
  do
-   CLASSPATH=$CLASSPATH:$file
-@@ -104,13 +107,21 @@ fi
+   if should_include_file "$file"; then
+@@ -145,13 +148,21 @@ fi
  
  # Log directory to use
  if [ "x$LOG_DIR" = "x" ]; then

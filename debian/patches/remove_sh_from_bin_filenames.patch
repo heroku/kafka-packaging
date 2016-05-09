@@ -740,10 +740,10 @@ index 4960836..0000000
 -exec $(dirname $0)/kafka-run-class.sh kafka.tools.ReplicaVerificationTool "$@"
 diff --git a/bin/kafka-run-class b/bin/kafka-run-class
 new file mode 100755
-index 0000000..f45d8d4
+index 0000000..688cced
 --- /dev/null
 +++ b/bin/kafka-run-class
-@@ -0,0 +1,205 @@
+@@ -0,0 +1,244 @@
 +#!/bin/bash
 +# Licensed to the Apache Software Foundation (ASF) under one or more
 +# contributor license agreements.  See the NOTICE file distributed with
@@ -766,6 +766,24 @@ index 0000000..f45d8d4
 +  exit 1
 +fi
 +
++if [ -z "$INCLUDE_TEST_JARS" ]; then
++  INCLUDE_TEST_JARS=false
++fi
++
++# Exclude jars not necessary for running commands.
++regex="(-(test|src|scaladoc|javadoc)\.jar|jar.asc)$"
++should_include_file() {
++  if [ "$INCLUDE_TEST_JARS" = true ]; then
++    return 0
++  fi
++  file=$1
++  if [ -z "$(echo "$file" | egrep "$regex")" ] ; then
++    return 0
++  else
++    return 1
++  fi
++}
++
 +base_dir=$(dirname $0)/..
 +
 +if [ -z "$SCALA_VERSION" ]; then
@@ -780,27 +798,39 @@ index 0000000..f45d8d4
 +shopt -s nullglob
 +for dir in $base_dir/core/build/dependant-libs-${SCALA_VERSION}*;
 +do
-+  CLASSPATH=$CLASSPATH:$dir/*
++  if [ -z $CLASSPATH ] ; then
++    CLASSPATH=$dir/*
++  else
++    CLASSPATH=$CLASSPATH:$dir/*
++  fi
 +done
 +
-+for file in $base_dir/examples/build/libs//kafka-examples*.jar;
++for file in $base_dir/examples/build/libs/kafka-examples*.jar;
 +do
-+  CLASSPATH=$CLASSPATH:$file
++  if should_include_file "$file"; then
++    CLASSPATH=$CLASSPATH:$file
++  fi
 +done
 +
 +for file in $base_dir/clients/build/libs/kafka-clients*.jar;
 +do
-+  CLASSPATH=$CLASSPATH:$file
++  if should_include_file "$file"; then
++    CLASSPATH=$CLASSPATH:$file
++  fi
 +done
 +
 +for file in $base_dir/streams/build/libs/kafka-streams*.jar;
 +do
-+  CLASSPATH=$CLASSPATH:$file
++  if should_include_file "$file"; then
++    CLASSPATH=$CLASSPATH:$file
++  fi
 +done
 +
 +for file in $base_dir/streams/examples/build/libs/kafka-streams-examples*.jar;
 +do
-+  CLASSPATH=$CLASSPATH:$file
++  if should_include_file "$file"; then
++    CLASSPATH=$CLASSPATH:$file
++  fi
 +done
 +
 +for file in $base_dir/streams/build/dependant-libs-${SCALA_VERSION}/rocksdb*.jar;
@@ -810,7 +840,9 @@ index 0000000..f45d8d4
 +
 +for file in $base_dir/tools/build/libs/kafka-tools*.jar;
 +do
-+  CLASSPATH=$CLASSPATH:$file
++  if should_include_file "$file"; then
++    CLASSPATH=$CLASSPATH:$file
++  fi
 +done
 +
 +for dir in $base_dir/tools/build/dependant-libs-${SCALA_VERSION}*;
@@ -822,7 +854,9 @@ index 0000000..f45d8d4
 +do
 +  for file in $base_dir/connect/${cc_pkg}/build/libs/connect-${cc_pkg}*.jar;
 +  do
-+    CLASSPATH=$CLASSPATH:$file
++    if should_include_file "$file"; then
++      CLASSPATH=$CLASSPATH:$file
++    fi
 +  done
 +  if [ -d "$base_dir/connect/${cc_pkg}/build/dependant-libs" ] ; then
 +    CLASSPATH=$CLASSPATH:$base_dir/connect/${cc_pkg}/build/dependant-libs/*
@@ -830,11 +864,18 @@ index 0000000..f45d8d4
 +done
 +
 +# classpath addition for release
-+CLASSPATH=$CLASSPATH:$base_dir/libs/*
++for file in $base_dir/libs/*;
++do
++  if should_include_file "$file"; then
++    CLASSPATH=$CLASSPATH:$file
++  fi
++done
 +
 +for file in $base_dir/core/build/libs/kafka_${SCALA_BINARY_VERSION}*.jar;
 +do
-+  CLASSPATH=$CLASSPATH:$file
++  if should_include_file "$file"; then
++    CLASSPATH=$CLASSPATH:$file
++  fi
 +done
 +shopt -u nullglob
 +
@@ -886,8 +927,6 @@ index 0000000..f45d8d4
 +    if [ -z "$JAVA_DEBUG_OPTS" ]; then
 +        JAVA_DEBUG_OPTS="$DEFAULT_JAVA_DEBUG_OPTS"
 +    fi
-+
-+
 +
 +    echo "Enabling Java debug options: $JAVA_DEBUG_OPTS"
 +    KAFKA_OPTS="$JAVA_DEBUG_OPTS $KAFKA_OPTS"
@@ -951,10 +990,10 @@ index 0000000..f45d8d4
 +fi
 diff --git a/bin/kafka-run-class.sh b/bin/kafka-run-class.sh
 deleted file mode 100755
-index f45d8d4..0000000
+index 688cced..0000000
 --- a/bin/kafka-run-class.sh
 +++ /dev/null
-@@ -1,205 +0,0 @@
+@@ -1,244 +0,0 @@
 -#!/bin/bash
 -# Licensed to the Apache Software Foundation (ASF) under one or more
 -# contributor license agreements.  See the NOTICE file distributed with
@@ -977,6 +1016,24 @@ index f45d8d4..0000000
 -  exit 1
 -fi
 -
+-if [ -z "$INCLUDE_TEST_JARS" ]; then
+-  INCLUDE_TEST_JARS=false
+-fi
+-
+-# Exclude jars not necessary for running commands.
+-regex="(-(test|src|scaladoc|javadoc)\.jar|jar.asc)$"
+-should_include_file() {
+-  if [ "$INCLUDE_TEST_JARS" = true ]; then
+-    return 0
+-  fi
+-  file=$1
+-  if [ -z "$(echo "$file" | egrep "$regex")" ] ; then
+-    return 0
+-  else
+-    return 1
+-  fi
+-}
+-
 -base_dir=$(dirname $0)/..
 -
 -if [ -z "$SCALA_VERSION" ]; then
@@ -991,27 +1048,39 @@ index f45d8d4..0000000
 -shopt -s nullglob
 -for dir in $base_dir/core/build/dependant-libs-${SCALA_VERSION}*;
 -do
--  CLASSPATH=$CLASSPATH:$dir/*
+-  if [ -z $CLASSPATH ] ; then
+-    CLASSPATH=$dir/*
+-  else
+-    CLASSPATH=$CLASSPATH:$dir/*
+-  fi
 -done
 -
--for file in $base_dir/examples/build/libs//kafka-examples*.jar;
+-for file in $base_dir/examples/build/libs/kafka-examples*.jar;
 -do
--  CLASSPATH=$CLASSPATH:$file
+-  if should_include_file "$file"; then
+-    CLASSPATH=$CLASSPATH:$file
+-  fi
 -done
 -
 -for file in $base_dir/clients/build/libs/kafka-clients*.jar;
 -do
--  CLASSPATH=$CLASSPATH:$file
+-  if should_include_file "$file"; then
+-    CLASSPATH=$CLASSPATH:$file
+-  fi
 -done
 -
 -for file in $base_dir/streams/build/libs/kafka-streams*.jar;
 -do
--  CLASSPATH=$CLASSPATH:$file
+-  if should_include_file "$file"; then
+-    CLASSPATH=$CLASSPATH:$file
+-  fi
 -done
 -
 -for file in $base_dir/streams/examples/build/libs/kafka-streams-examples*.jar;
 -do
--  CLASSPATH=$CLASSPATH:$file
+-  if should_include_file "$file"; then
+-    CLASSPATH=$CLASSPATH:$file
+-  fi
 -done
 -
 -for file in $base_dir/streams/build/dependant-libs-${SCALA_VERSION}/rocksdb*.jar;
@@ -1021,7 +1090,9 @@ index f45d8d4..0000000
 -
 -for file in $base_dir/tools/build/libs/kafka-tools*.jar;
 -do
--  CLASSPATH=$CLASSPATH:$file
+-  if should_include_file "$file"; then
+-    CLASSPATH=$CLASSPATH:$file
+-  fi
 -done
 -
 -for dir in $base_dir/tools/build/dependant-libs-${SCALA_VERSION}*;
@@ -1033,7 +1104,9 @@ index f45d8d4..0000000
 -do
 -  for file in $base_dir/connect/${cc_pkg}/build/libs/connect-${cc_pkg}*.jar;
 -  do
--    CLASSPATH=$CLASSPATH:$file
+-    if should_include_file "$file"; then
+-      CLASSPATH=$CLASSPATH:$file
+-    fi
 -  done
 -  if [ -d "$base_dir/connect/${cc_pkg}/build/dependant-libs" ] ; then
 -    CLASSPATH=$CLASSPATH:$base_dir/connect/${cc_pkg}/build/dependant-libs/*
@@ -1041,11 +1114,18 @@ index f45d8d4..0000000
 -done
 -
 -# classpath addition for release
--CLASSPATH=$CLASSPATH:$base_dir/libs/*
+-for file in $base_dir/libs/*;
+-do
+-  if should_include_file "$file"; then
+-    CLASSPATH=$CLASSPATH:$file
+-  fi
+-done
 -
 -for file in $base_dir/core/build/libs/kafka_${SCALA_BINARY_VERSION}*.jar;
 -do
--  CLASSPATH=$CLASSPATH:$file
+-  if should_include_file "$file"; then
+-    CLASSPATH=$CLASSPATH:$file
+-  fi
 -done
 -shopt -u nullglob
 -
@@ -1097,8 +1177,6 @@ index f45d8d4..0000000
 -    if [ -z "$JAVA_DEBUG_OPTS" ]; then
 -        JAVA_DEBUG_OPTS="$DEFAULT_JAVA_DEBUG_OPTS"
 -    fi
--
--
 -
 -    echo "Enabling Java debug options: $JAVA_DEBUG_OPTS"
 -    KAFKA_OPTS="$JAVA_DEBUG_OPTS $KAFKA_OPTS"
@@ -1262,7 +1340,7 @@ index 36c2a0d..0000000
 -exec $base_dir/kafka-run-class.sh $EXTRA_ARGS kafka.Kafka "$@"
 diff --git a/bin/kafka-server-stop b/bin/kafka-server-stop
 new file mode 100755
-index 0000000..f75ded7
+index 0000000..d3c660c
 --- /dev/null
 +++ b/bin/kafka-server-stop
 @@ -0,0 +1,24 @@
@@ -1287,12 +1365,12 @@ index 0000000..f75ded7
 +  echo "No kafka server to stop"
 +  exit 1
 +else 
-+  kill -SIGTERM $PIDS
++  kill -s TERM $PIDS
 +fi
 +
 diff --git a/bin/kafka-server-stop.sh b/bin/kafka-server-stop.sh
 deleted file mode 100755
-index f75ded7..0000000
+index d3c660c..0000000
 --- a/bin/kafka-server-stop.sh
 +++ /dev/null
 @@ -1,24 +0,0 @@
@@ -1317,7 +1395,7 @@ index f75ded7..0000000
 -  echo "No kafka server to stop"
 -  exit 1
 -else 
--  kill -SIGTERM $PIDS
+-  kill -s TERM $PIDS
 -fi
 -
 diff --git a/bin/kafka-simple-consumer-shell b/bin/kafka-simple-consumer-shell
@@ -1664,7 +1742,7 @@ index 4287774..0000000
 -exec $base_dir/kafka-run-class.sh $EXTRA_ARGS org.apache.zookeeper.server.quorum.QuorumPeerMain "$@"
 diff --git a/bin/zookeeper-server-stop b/bin/zookeeper-server-stop
 new file mode 100755
-index 0000000..07c7910
+index 0000000..f771064
 --- /dev/null
 +++ b/bin/zookeeper-server-stop
 @@ -0,0 +1,24 @@
@@ -1689,12 +1767,12 @@ index 0000000..07c7910
 +  echo "No zookeeper server to stop"
 +  exit 1
 +else
-+  kill -SIGTERM $PIDS
++  kill -s TERM $PIDS
 +fi
 +
 diff --git a/bin/zookeeper-server-stop.sh b/bin/zookeeper-server-stop.sh
 deleted file mode 100755
-index 07c7910..0000000
+index f771064..0000000
 --- a/bin/zookeeper-server-stop.sh
 +++ /dev/null
 @@ -1,24 +0,0 @@
@@ -1719,7 +1797,7 @@ index 07c7910..0000000
 -  echo "No zookeeper server to stop"
 -  exit 1
 -else
--  kill -SIGTERM $PIDS
+-  kill -s TERM $PIDS
 -fi
 -
 diff --git a/bin/zookeeper-shell b/bin/zookeeper-shell
