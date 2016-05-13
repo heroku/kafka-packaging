@@ -43,20 +43,20 @@ index 85904f7..b895deb 100755
  
  exec $(dirname $0)/kafka-run-class org.apache.kafka.connect.cli.ConnectStandalone "$@"
 diff --git a/bin/kafka-run-class b/bin/kafka-run-class
-index 688cced..f3999a3 100755
+index c2b3368..fcd4373 100755
 --- a/bin/kafka-run-class
 +++ b/bin/kafka-run-class
-@@ -125,6 +125,9 @@ do
-   fi
- done
+@@ -71,6 +71,9 @@ done
+ # classpath addition for release
+ CLASSPATH=$CLASSPATH:$base_dir/libs/*
  
 +# classpath addition for releases with LSB-style layout
 +CLASSPATH=$CLASSPATH:$base_dir/../share/java/kafka-##KAFKA_VERSION##/*
 +
  for file in $base_dir/core/build/libs/kafka_${SCALA_BINARY_VERSION}*.jar;
  do
-   if should_include_file "$file"; then
-@@ -145,13 +148,21 @@ fi
+   CLASSPATH=$CLASSPATH:$file
+@@ -89,13 +92,21 @@ fi
  
  # Log directory to use
  if [ "x$LOG_DIR" = "x" ]; then
@@ -103,8 +103,59 @@ index e1ad21c..6fdf6d5 100755
  
  if [ "x$KAFKA_HEAP_OPTS" = "x" ]; then
      export KAFKA_HEAP_OPTS="-Xmx1G -Xms1G"
+diff --git a/bin/windows/kafka-run-class.bat b/bin/windows/kafka-run-class.bat
+index cd72bfd..8658699 100644
+--- a/bin/windows/kafka-run-class.bat
++++ b/bin/windows/kafka-run-class.bat
+@@ -77,7 +77,11 @@ IF ["%JMX_PORT%"] NEQ [""] (
+ 
+ rem Log4j settings
+ IF ["%KAFKA_LOG4J_OPTS%"] EQU [""] (
+-	set KAFKA_LOG4J_OPTS=-Dlog4j.configuration=file:%BASE_DIR%/config/tools-log4j.properties
++	if exists %~dp0../../etc/kafka-##KAFKA_VERSION##/tools-log4j.properties (
++		set KAFKA_LOG4J_OPTS=-Dlog4j.configuration=file:%~dp0../../etc/kafka-##KAFKA_VERSION##/tools-log4j.properties
++	) else (
++		set KAFKA_LOG4J_OPTS=-Dlog4j.configuration=file:%BASE_DIR%/config/tools-log4j.properties
++	)
+ )
+ 
+ rem Generic jvm settings you want to add
+diff --git a/bin/windows/kafka-server-start.bat b/bin/windows/kafka-server-start.bat
+index 6a5aa9f..e4320fb 100644
+--- a/bin/windows/kafka-server-start.bat
++++ b/bin/windows/kafka-server-start.bat
+@@ -20,7 +20,11 @@ IF [%1] EQU [] (
+ )
+ 
+ SetLocal
+-set KAFKA_LOG4J_OPTS=-Dlog4j.configuration=file:%~dp0../../config/log4j.properties
++if exists %~dp0../../etc/kafka-##KAFKA_VERSION##/log4j.properties (
++	set KAFKA_LOG4J_OPTS=-Dlog4j.configuration=file:%~dp0../../etc/kafka-##KAFKA_VERSION##/log4j.properties
++) else (
++	set KAFKA_LOG4J_OPTS=-Dlog4j.configuration=file:%~dp0../../config/log4j.properties
++)
+ set KAFKA_HEAP_OPTS=-Xmx1G -Xms1G
+ %~dp0kafka-run-class.bat kafka.Kafka %*
+ EndLocal
+diff --git a/bin/windows/zookeeper-server-start.bat b/bin/windows/zookeeper-server-start.bat
+index 9836283..b68701f 100644
+--- a/bin/windows/zookeeper-server-start.bat
++++ b/bin/windows/zookeeper-server-start.bat
+@@ -20,7 +20,11 @@ IF [%1] EQU [] (
+ )
+ 
+ SetLocal
+-set KAFKA_LOG4J_OPTS=-Dlog4j.configuration=file:%~dp0../../config/log4j.properties
++if exists %~dp0../../etc/kafka-##KAFKA_VERSION##/log4j.properties (
++	set KAFKA_LOG4J_OPTS=-Dlog4j.configuration=file:%~dp0../../etc/kafka-##KAFKA_VERSION##/log4j.properties
++) else (
++	set KAFKA_LOG4J_OPTS=-Dlog4j.configuration=file:%~dp0../../config/log4j.properties
++)
+ set KAFKA_HEAP_OPTS=-Xmx512M -Xms512M
+ %~dp0kafka-run-class.bat org.apache.zookeeper.server.quorum.QuorumPeerMain %*
+ EndLocal
 diff --git a/bin/zookeeper-server-start b/bin/zookeeper-server-start
-index d5d8d3b..0423d03 100755
+index 24b8e4d..0472103 100755
 --- a/bin/zookeeper-server-start
 +++ b/bin/zookeeper-server-start
 @@ -22,8 +22,17 @@ fi
@@ -127,10 +178,10 @@ index d5d8d3b..0423d03 100755
  if [ "x$KAFKA_HEAP_OPTS" = "x" ]; then
      export KAFKA_HEAP_OPTS="-Xmx512M -Xms512M"
 diff --git a/config/server.properties b/config/server.properties
-index aebcb87..efb1871 100644
+index ddb695a..054a5ed 100644
 --- a/config/server.properties
 +++ b/config/server.properties
-@@ -53,7 +53,7 @@ socket.request.max.bytes=104857600
+@@ -57,7 +57,7 @@ socket.request.max.bytes=104857600
  ############################# Log Basics #############################
  
  # A comma seperated list of directories under which to store log files
