@@ -1,8 +1,8 @@
 diff --git a/bin/connect-distributed b/bin/connect-distributed
-index 354c3cc..a2bbe78 100755
+index 4dad66a..6d1aefd 100755
 --- a/bin/connect-distributed
 +++ b/bin/connect-distributed
-@@ -17,7 +17,16 @@
+@@ -23,8 +23,17 @@ fi
  base_dir=$(dirname $0)
  
  if [ "x$KAFKA_LOG4J_OPTS" = "x" ]; then
@@ -19,12 +19,13 @@ index 354c3cc..a2bbe78 100755
  fi
 +export KAFKA_LOG4J_OPTS
  
- exec $(dirname $0)/kafka-run-class org.apache.kafka.connect.cli.ConnectDistributed "$@"
+ EXTRA_ARGS=${EXTRA_ARGS-'-name connectDistributed'}
+ 
 diff --git a/bin/connect-standalone b/bin/connect-standalone
-index 85904f7..b895deb 100755
+index 5c8be55..33931cb 100755
 --- a/bin/connect-standalone
 +++ b/bin/connect-standalone
-@@ -17,7 +17,16 @@
+@@ -23,8 +23,17 @@ fi
  base_dir=$(dirname $0)
  
  if [ "x$KAFKA_LOG4J_OPTS" = "x" ]; then
@@ -41,12 +42,13 @@ index 85904f7..b895deb 100755
  fi
 +export KAFKA_LOG4J_OPTS
  
- exec $(dirname $0)/kafka-run-class org.apache.kafka.connect.cli.ConnectStandalone "$@"
+ EXTRA_ARGS=${EXTRA_ARGS-'-name connectStandalone'}
+ 
 diff --git a/bin/kafka-run-class b/bin/kafka-run-class
-index 76d0b88..4166dbe 100755
+index 1f5140b..ccb0475 100755
 --- a/bin/kafka-run-class
 +++ b/bin/kafka-run-class
-@@ -131,6 +131,10 @@ do
+@@ -138,6 +138,10 @@ do
      CLASSPATH="$CLASSPATH":"$file"
    fi
  done
@@ -57,32 +59,8 @@ index 76d0b88..4166dbe 100755
  shopt -u nullglob
  
  # JMX settings
-@@ -145,13 +149,21 @@ fi
- 
- # Log directory to use
- if [ "x$LOG_DIR" = "x" ]; then
--    LOG_DIR="$base_dir/logs"
-+    LOG_DIR="/var/log/kafka-##KAFKA_VERSION##"
- fi
- 
- # Log4j settings
- if [ -z "$KAFKA_LOG4J_OPTS" ]; then
-   # Log to console. This is a tool.
--  KAFKA_LOG4J_OPTS="-Dlog4j.configuration=file:$base_dir/config/tools-log4j.properties"
-+  LOG4J_CONFIG_NORMAL_INSTALL="/etc/kafka-##KAFKA_VERSION##/tools-log4j.properties"
-+  LOG4J_CONFIG_ZIP_INSTALL="$base_dir/etc/kafka-##KAFKA_VERSION##/tools-log4j.properties"
-+  if [ -e "$LOG4J_CONFIG_NORMAL_INSTALL" ]; then # Normal install layout
-+    KAFKA_LOG4J_OPTS="-Dlog4j.configuration=file:${LOG4J_CONFIG_NORMAL_INSTALL}"
-+  elif [ -e "${LOG4J_CONFIG_ZIP_INSTALL}" ]; then # Simple zip file layout
-+    KAFKA_LOG4J_OPTS="-Dlog4j.configuration=file:${LOG4J_CONFIG_ZIP_INSTALL}"
-+  else # Fallback to normal default
-+    KAFKA_LOG4J_OPTS="-Dlog4j.configuration=file:$base_dir/config/tools-log4j.properties"
-+  fi
- else
-   # create logs directory
-   if [ ! -d "$LOG_DIR" ]; then
 diff --git a/bin/kafka-server-start b/bin/kafka-server-start
-index e1ad21c..6fdf6d5 100755
+index e1dcb63..33afea8 100755
 --- a/bin/kafka-server-start
 +++ b/bin/kafka-server-start
 @@ -22,8 +22,17 @@ fi
@@ -105,7 +83,7 @@ index e1ad21c..6fdf6d5 100755
  if [ "x$KAFKA_HEAP_OPTS" = "x" ]; then
      export KAFKA_HEAP_OPTS="-Xmx1G -Xms1G"
 diff --git a/bin/zookeeper-server-start b/bin/zookeeper-server-start
-index d5d8d3b..0423d03 100755
+index 9ad07af..f2cb5ee 100755
 --- a/bin/zookeeper-server-start
 +++ b/bin/zookeeper-server-start
 @@ -22,8 +22,17 @@ fi
@@ -128,10 +106,10 @@ index d5d8d3b..0423d03 100755
  if [ "x$KAFKA_HEAP_OPTS" = "x" ]; then
      export KAFKA_HEAP_OPTS="-Xmx512M -Xms512M"
 diff --git a/config/server.properties b/config/server.properties
-index aebcb87..efb1871 100644
+index f00a7d6..08479cc 100644
 --- a/config/server.properties
 +++ b/config/server.properties
-@@ -53,7 +53,7 @@ socket.request.max.bytes=104857600
+@@ -57,7 +57,7 @@ socket.request.max.bytes=104857600
  ############################# Log Basics #############################
  
  # A comma seperated list of directories under which to store log files

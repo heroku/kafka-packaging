@@ -1,9 +1,9 @@
 diff --git a/bin/connect-distributed b/bin/connect-distributed
 new file mode 100755
-index 0000000..354c3cc
+index 0000000..4dad66a
 --- /dev/null
 +++ b/bin/connect-distributed
-@@ -0,0 +1,23 @@
+@@ -0,0 +1,41 @@
 +#!/bin/sh
 +# Licensed to the Apache Software Foundation (ASF) under one or more
 +# contributor license agreements.  See the NOTICE file distributed with
@@ -20,19 +20,37 @@ index 0000000..354c3cc
 +# See the License for the specific language governing permissions and
 +# limitations under the License.
 +
++if [ $# -lt 1 ];
++then
++        echo "USAGE: $0 [-daemon] connect-distributed.properties"
++        exit 1
++fi
++
 +base_dir=$(dirname $0)
 +
 +if [ "x$KAFKA_LOG4J_OPTS" = "x" ]; then
 +    export KAFKA_LOG4J_OPTS="-Dlog4j.configuration=file:$base_dir/../config/connect-log4j.properties"
 +fi
 +
-+exec $(dirname $0)/kafka-run-class org.apache.kafka.connect.cli.ConnectDistributed "$@"
++EXTRA_ARGS=${EXTRA_ARGS-'-name connectDistributed'}
++
++COMMAND=$1
++case $COMMAND in
++  -daemon)
++    EXTRA_ARGS="-daemon "$EXTRA_ARGS
++    shift
++    ;;
++  *)
++    ;;
++esac
++
++exec $(dirname $0)/kafka-run-class $EXTRA_ARGS org.apache.kafka.connect.cli.ConnectDistributed "$@"
 diff --git a/bin/connect-distributed.sh b/bin/connect-distributed.sh
 deleted file mode 100755
-index d9f6325..0000000
+index 99cd27b..0000000
 --- a/bin/connect-distributed.sh
 +++ /dev/null
-@@ -1,23 +0,0 @@
+@@ -1,41 +0,0 @@
 -#!/bin/sh
 -# Licensed to the Apache Software Foundation (ASF) under one or more
 -# contributor license agreements.  See the NOTICE file distributed with
@@ -49,19 +67,37 @@ index d9f6325..0000000
 -# See the License for the specific language governing permissions and
 -# limitations under the License.
 -
+-if [ $# -lt 1 ];
+-then
+-        echo "USAGE: $0 [-daemon] connect-distributed.properties"
+-        exit 1
+-fi
+-
 -base_dir=$(dirname $0)
 -
 -if [ "x$KAFKA_LOG4J_OPTS" = "x" ]; then
 -    export KAFKA_LOG4J_OPTS="-Dlog4j.configuration=file:$base_dir/../config/connect-log4j.properties"
 -fi
 -
--exec $(dirname $0)/kafka-run-class.sh org.apache.kafka.connect.cli.ConnectDistributed "$@"
+-EXTRA_ARGS=${EXTRA_ARGS-'-name connectDistributed'}
+-
+-COMMAND=$1
+-case $COMMAND in
+-  -daemon)
+-    EXTRA_ARGS="-daemon "$EXTRA_ARGS
+-    shift
+-    ;;
+-  *)
+-    ;;
+-esac
+-
+-exec $(dirname $0)/kafka-run-class.sh $EXTRA_ARGS org.apache.kafka.connect.cli.ConnectDistributed "$@"
 diff --git a/bin/connect-standalone b/bin/connect-standalone
 new file mode 100755
-index 0000000..85904f7
+index 0000000..5c8be55
 --- /dev/null
 +++ b/bin/connect-standalone
-@@ -0,0 +1,23 @@
+@@ -0,0 +1,41 @@
 +#!/bin/sh
 +# Licensed to the Apache Software Foundation (ASF) under one or more
 +# contributor license agreements.  See the NOTICE file distributed with
@@ -78,19 +114,37 @@ index 0000000..85904f7
 +# See the License for the specific language governing permissions and
 +# limitations under the License.
 +
++if [ $# -lt 1 ];
++then
++        echo "USAGE: $0 [-daemon] connect-standalone.properties"
++        exit 1
++fi
++
 +base_dir=$(dirname $0)
 +
 +if [ "x$KAFKA_LOG4J_OPTS" = "x" ]; then
 +    export KAFKA_LOG4J_OPTS="-Dlog4j.configuration=file:$base_dir/../config/connect-log4j.properties"
 +fi
 +
-+exec $(dirname $0)/kafka-run-class org.apache.kafka.connect.cli.ConnectStandalone "$@"
++EXTRA_ARGS=${EXTRA_ARGS-'-name connectStandalone'}
++
++COMMAND=$1
++case $COMMAND in
++  -daemon)
++    EXTRA_ARGS="-daemon "$EXTRA_ARGS
++    shift
++    ;;
++  *)
++    ;;
++esac
++
++exec $(dirname $0)/kafka-run-class $EXTRA_ARGS org.apache.kafka.connect.cli.ConnectStandalone "$@"
 diff --git a/bin/connect-standalone.sh b/bin/connect-standalone.sh
 deleted file mode 100755
-index a14df86..0000000
+index 623562a..0000000
 --- a/bin/connect-standalone.sh
 +++ /dev/null
-@@ -1,23 +0,0 @@
+@@ -1,41 +0,0 @@
 -#!/bin/sh
 -# Licensed to the Apache Software Foundation (ASF) under one or more
 -# contributor license agreements.  See the NOTICE file distributed with
@@ -107,13 +161,31 @@ index a14df86..0000000
 -# See the License for the specific language governing permissions and
 -# limitations under the License.
 -
+-if [ $# -lt 1 ];
+-then
+-        echo "USAGE: $0 [-daemon] connect-standalone.properties"
+-        exit 1
+-fi
+-
 -base_dir=$(dirname $0)
 -
 -if [ "x$KAFKA_LOG4J_OPTS" = "x" ]; then
 -    export KAFKA_LOG4J_OPTS="-Dlog4j.configuration=file:$base_dir/../config/connect-log4j.properties"
 -fi
 -
--exec $(dirname $0)/kafka-run-class.sh org.apache.kafka.connect.cli.ConnectStandalone "$@"
+-EXTRA_ARGS=${EXTRA_ARGS-'-name connectStandalone'}
+-
+-COMMAND=$1
+-case $COMMAND in
+-  -daemon)
+-    EXTRA_ARGS="-daemon "$EXTRA_ARGS
+-    shift
+-    ;;
+-  *)
+-    ;;
+-esac
+-
+-exec $(dirname $0)/kafka-run-class.sh $EXTRA_ARGS org.apache.kafka.connect.cli.ConnectStandalone "$@"
 diff --git a/bin/kafka-acls b/bin/kafka-acls
 new file mode 100755
 index 0000000..72c0629
@@ -740,10 +812,10 @@ index 4960836..0000000
 -exec $(dirname $0)/kafka-run-class.sh kafka.tools.ReplicaVerificationTool "$@"
 diff --git a/bin/kafka-run-class b/bin/kafka-run-class
 new file mode 100755
-index 0000000..76d0b88
+index 0000000..1f5140b
 --- /dev/null
 +++ b/bin/kafka-run-class
-@@ -0,0 +1,244 @@
+@@ -0,0 +1,259 @@
 +#!/bin/bash
 +# Licensed to the Apache Software Foundation (ASF) under one or more
 +# contributor license agreements.  See the NOTICE file distributed with
@@ -764,6 +836,13 @@ index 0000000..76d0b88
 +then
 +  echo "USAGE: $0 [-daemon] [-name servicename] [-loggc] classname [opts]"
 +  exit 1
++fi
++
++# CYGINW == 1 if Cygwin is detected, else 0.
++if [[ $(uname -a) =~ "CYGWIN" ]]; then
++  CYGWIN=1
++else
++  CYGWIN=0
 +fi
 +
 +if [ -z "$INCLUDE_TEST_JARS" ]; then
@@ -787,11 +866,11 @@ index 0000000..76d0b88
 +base_dir=$(dirname $0)/..
 +
 +if [ -z "$SCALA_VERSION" ]; then
-+	SCALA_VERSION=2.10.6
++  SCALA_VERSION=2.10.6
 +fi
 +
 +if [ -z "$SCALA_BINARY_VERSION" ]; then
-+	SCALA_BINARY_VERSION=2.10
++  SCALA_BINARY_VERSION=2.10
 +fi
 +
 +# run ./gradlew copyDependantLibs to get all dependant jars in a local dir
@@ -891,13 +970,16 @@ index 0000000..76d0b88
 +
 +# Log directory to use
 +if [ "x$LOG_DIR" = "x" ]; then
-+    LOG_DIR="$base_dir/logs"
++  LOG_DIR="$base_dir/logs"
 +fi
 +
 +# Log4j settings
 +if [ -z "$KAFKA_LOG4J_OPTS" ]; then
 +  # Log to console. This is a tool.
-+  KAFKA_LOG4J_OPTS="-Dlog4j.configuration=file:$base_dir/config/tools-log4j.properties"
++  LOG4J_DIR="$base_dir/config/tools-log4j.properties"
++  # If Cygwin is detected, LOG4J_DIR is converted to Windows format.
++  (( CYGWIN )) && LOG4J_DIR=$(cygpath --path --mixed "${LOG4J_DIR}")
++  KAFKA_LOG4J_OPTS="-Dlog4j.configuration=file:${LOG4J_DIR}"
 +else
 +  # create logs directory
 +  if [ ! -d "$LOG_DIR" ]; then
@@ -905,6 +987,8 @@ index 0000000..76d0b88
 +  fi
 +fi
 +
++# If Cygwin is detected, LOG_DIR is converted to Windows format.
++(( CYGWIN )) && LOG_DIR=$(cygpath --path --mixed "${LOG_DIR}")
 +KAFKA_LOG4J_OPTS="-Dkafka.logs.dir=$LOG_DIR $KAFKA_LOG4J_OPTS"
 +
 +# Generic jvm settings you want to add
@@ -982,6 +1066,9 @@ index 0000000..76d0b88
 +  KAFKA_GC_LOG_OPTS="-Xloggc:$LOG_DIR/$GC_LOG_FILE_NAME -verbose:gc -XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+PrintGCTimeStamps "
 +fi
 +
++# If Cygwin is detected, classpath is converted to Windows format.
++(( CYGWIN )) && CLASSPATH=$(cygpath --path --mixed "${CLASSPATH}")
++
 +# Launch mode
 +if [ "x$DAEMON_MODE" = "xtrue" ]; then
 +  nohup $JAVA $KAFKA_HEAP_OPTS $KAFKA_JVM_PERFORMANCE_OPTS $KAFKA_GC_LOG_OPTS $KAFKA_JMX_OPTS $KAFKA_LOG4J_OPTS -cp $CLASSPATH $KAFKA_OPTS "$@" > "$CONSOLE_OUTPUT_FILE" 2>&1 < /dev/null &
@@ -990,10 +1077,10 @@ index 0000000..76d0b88
 +fi
 diff --git a/bin/kafka-run-class.sh b/bin/kafka-run-class.sh
 deleted file mode 100755
-index 76d0b88..0000000
+index 1f5140b..0000000
 --- a/bin/kafka-run-class.sh
 +++ /dev/null
-@@ -1,244 +0,0 @@
+@@ -1,259 +0,0 @@
 -#!/bin/bash
 -# Licensed to the Apache Software Foundation (ASF) under one or more
 -# contributor license agreements.  See the NOTICE file distributed with
@@ -1014,6 +1101,13 @@ index 76d0b88..0000000
 -then
 -  echo "USAGE: $0 [-daemon] [-name servicename] [-loggc] classname [opts]"
 -  exit 1
+-fi
+-
+-# CYGINW == 1 if Cygwin is detected, else 0.
+-if [[ $(uname -a) =~ "CYGWIN" ]]; then
+-  CYGWIN=1
+-else
+-  CYGWIN=0
 -fi
 -
 -if [ -z "$INCLUDE_TEST_JARS" ]; then
@@ -1037,11 +1131,11 @@ index 76d0b88..0000000
 -base_dir=$(dirname $0)/..
 -
 -if [ -z "$SCALA_VERSION" ]; then
--	SCALA_VERSION=2.10.6
+-  SCALA_VERSION=2.10.6
 -fi
 -
 -if [ -z "$SCALA_BINARY_VERSION" ]; then
--	SCALA_BINARY_VERSION=2.10
+-  SCALA_BINARY_VERSION=2.10
 -fi
 -
 -# run ./gradlew copyDependantLibs to get all dependant jars in a local dir
@@ -1141,13 +1235,16 @@ index 76d0b88..0000000
 -
 -# Log directory to use
 -if [ "x$LOG_DIR" = "x" ]; then
--    LOG_DIR="$base_dir/logs"
+-  LOG_DIR="$base_dir/logs"
 -fi
 -
 -# Log4j settings
 -if [ -z "$KAFKA_LOG4J_OPTS" ]; then
 -  # Log to console. This is a tool.
--  KAFKA_LOG4J_OPTS="-Dlog4j.configuration=file:$base_dir/config/tools-log4j.properties"
+-  LOG4J_DIR="$base_dir/config/tools-log4j.properties"
+-  # If Cygwin is detected, LOG4J_DIR is converted to Windows format.
+-  (( CYGWIN )) && LOG4J_DIR=$(cygpath --path --mixed "${LOG4J_DIR}")
+-  KAFKA_LOG4J_OPTS="-Dlog4j.configuration=file:${LOG4J_DIR}"
 -else
 -  # create logs directory
 -  if [ ! -d "$LOG_DIR" ]; then
@@ -1155,6 +1252,8 @@ index 76d0b88..0000000
 -  fi
 -fi
 -
+-# If Cygwin is detected, LOG_DIR is converted to Windows format.
+-(( CYGWIN )) && LOG_DIR=$(cygpath --path --mixed "${LOG_DIR}")
 -KAFKA_LOG4J_OPTS="-Dkafka.logs.dir=$LOG_DIR $KAFKA_LOG4J_OPTS"
 -
 -# Generic jvm settings you want to add
@@ -1232,6 +1331,9 @@ index 76d0b88..0000000
 -  KAFKA_GC_LOG_OPTS="-Xloggc:$LOG_DIR/$GC_LOG_FILE_NAME -verbose:gc -XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+PrintGCTimeStamps "
 -fi
 -
+-# If Cygwin is detected, classpath is converted to Windows format.
+-(( CYGWIN )) && CLASSPATH=$(cygpath --path --mixed "${CLASSPATH}")
+-
 -# Launch mode
 -if [ "x$DAEMON_MODE" = "xtrue" ]; then
 -  nohup $JAVA $KAFKA_HEAP_OPTS $KAFKA_JVM_PERFORMANCE_OPTS $KAFKA_GC_LOG_OPTS $KAFKA_JMX_OPTS $KAFKA_LOG4J_OPTS -cp $CLASSPATH $KAFKA_OPTS "$@" > "$CONSOLE_OUTPUT_FILE" 2>&1 < /dev/null &
@@ -1240,7 +1342,7 @@ index 76d0b88..0000000
 -fi
 diff --git a/bin/kafka-server-start b/bin/kafka-server-start
 new file mode 100755
-index 0000000..e1ad21c
+index 0000000..e1dcb63
 --- /dev/null
 +++ b/bin/kafka-server-start
 @@ -0,0 +1,44 @@
@@ -1251,9 +1353,9 @@ index 0000000..e1ad21c
 +# The ASF licenses this file to You under the Apache License, Version 2.0
 +# (the "License"); you may not use this file except in compliance with
 +# the License.  You may obtain a copy of the License at
-+# 
++#
 +#    http://www.apache.org/licenses/LICENSE-2.0
-+# 
++#
 +# Unless required by applicable law or agreed to in writing, software
 +# distributed under the License is distributed on an "AS IS" BASIS,
 +# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -1275,7 +1377,7 @@ index 0000000..e1ad21c
 +    export KAFKA_HEAP_OPTS="-Xmx1G -Xms1G"
 +fi
 +
-+EXTRA_ARGS="-name kafkaServer -loggc"
++EXTRA_ARGS=${EXTRA_ARGS-'-name kafkaServer -loggc'}
 +
 +COMMAND=$1
 +case $COMMAND in
@@ -1290,7 +1392,7 @@ index 0000000..e1ad21c
 +exec $base_dir/kafka-run-class $EXTRA_ARGS kafka.Kafka "$@"
 diff --git a/bin/kafka-server-start.sh b/bin/kafka-server-start.sh
 deleted file mode 100755
-index 36c2a0d..0000000
+index 5a53126..0000000
 --- a/bin/kafka-server-start.sh
 +++ /dev/null
 @@ -1,44 +0,0 @@
@@ -1301,9 +1403,9 @@ index 36c2a0d..0000000
 -# The ASF licenses this file to You under the Apache License, Version 2.0
 -# (the "License"); you may not use this file except in compliance with
 -# the License.  You may obtain a copy of the License at
--# 
+-#
 -#    http://www.apache.org/licenses/LICENSE-2.0
--# 
+-#
 -# Unless required by applicable law or agreed to in writing, software
 -# distributed under the License is distributed on an "AS IS" BASIS,
 -# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -1325,7 +1427,7 @@ index 36c2a0d..0000000
 -    export KAFKA_HEAP_OPTS="-Xmx1G -Xms1G"
 -fi
 -
--EXTRA_ARGS="-name kafkaServer -loggc"
+-EXTRA_ARGS=${EXTRA_ARGS-'-name kafkaServer -loggc'}
 -
 -COMMAND=$1
 -case $COMMAND in
@@ -1444,6 +1546,60 @@ index 27e386a..0000000
 -# limitations under the License.
 -
 -exec $(dirname $0)/kafka-run-class.sh kafka.tools.SimpleConsumerShell "$@"
+diff --git a/bin/kafka-streams-application-reset b/bin/kafka-streams-application-reset
+new file mode 100755
+index 0000000..c9cde3f
+--- /dev/null
++++ b/bin/kafka-streams-application-reset
+@@ -0,0 +1,21 @@
++#!/bin/bash
++# Licensed to the Apache Software Foundation (ASF) under one or more
++# contributor license agreements.  See the NOTICE file distributed with
++# this work for additional information regarding copyright ownership.
++# The ASF licenses this file to You under the Apache License, Version 2.0
++# (the "License"); you may not use this file except in compliance with
++# the License.  You may obtain a copy of the License at
++#
++#    http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
++
++if [ "x$KAFKA_HEAP_OPTS" = "x" ]; then
++    export KAFKA_HEAP_OPTS="-Xmx512M"
++fi
++
++exec $(dirname $0)/kafka-run-class kafka.tools.StreamsResetter "$@"
+diff --git a/bin/kafka-streams-application-reset.sh b/bin/kafka-streams-application-reset.sh
+deleted file mode 100755
+index 3363732..0000000
+--- a/bin/kafka-streams-application-reset.sh
++++ /dev/null
+@@ -1,21 +0,0 @@
+-#!/bin/bash
+-# Licensed to the Apache Software Foundation (ASF) under one or more
+-# contributor license agreements.  See the NOTICE file distributed with
+-# this work for additional information regarding copyright ownership.
+-# The ASF licenses this file to You under the Apache License, Version 2.0
+-# (the "License"); you may not use this file except in compliance with
+-# the License.  You may obtain a copy of the License at
+-#
+-#    http://www.apache.org/licenses/LICENSE-2.0
+-#
+-# Unless required by applicable law or agreed to in writing, software
+-# distributed under the License is distributed on an "AS IS" BASIS,
+-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-# See the License for the specific language governing permissions and
+-# limitations under the License.
+-
+-if [ "x$KAFKA_HEAP_OPTS" = "x" ]; then
+-    export KAFKA_HEAP_OPTS="-Xmx512M"
+-fi
+-
+-exec $(dirname $0)/kafka-run-class.sh kafka.tools.StreamsResetter "$@"
 diff --git a/bin/kafka-topics b/bin/kafka-topics
 new file mode 100755
 index 0000000..cb39c54
@@ -1642,7 +1798,7 @@ index 722bde7..0000000
 -exec $(dirname $0)/kafka-run-class.sh kafka.admin.ZkSecurityMigrator "$@"
 diff --git a/bin/zookeeper-server-start b/bin/zookeeper-server-start
 new file mode 100755
-index 0000000..d5d8d3b
+index 0000000..9ad07af
 --- /dev/null
 +++ b/bin/zookeeper-server-start
 @@ -0,0 +1,44 @@
@@ -1653,9 +1809,9 @@ index 0000000..d5d8d3b
 +# The ASF licenses this file to You under the Apache License, Version 2.0
 +# (the "License"); you may not use this file except in compliance with
 +# the License.  You may obtain a copy of the License at
-+# 
++#
 +#    http://www.apache.org/licenses/LICENSE-2.0
-+# 
++#
 +# Unless required by applicable law or agreed to in writing, software
 +# distributed under the License is distributed on an "AS IS" BASIS,
 +# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -1677,7 +1833,7 @@ index 0000000..d5d8d3b
 +    export KAFKA_HEAP_OPTS="-Xmx512M -Xms512M"
 +fi
 +
-+EXTRA_ARGS="-name zookeeper -loggc"
++EXTRA_ARGS=${EXTRA_ARGS-'-name zookeeper -loggc'}
 +
 +COMMAND=$1
 +case $COMMAND in
@@ -1692,7 +1848,7 @@ index 0000000..d5d8d3b
 +exec $base_dir/kafka-run-class $EXTRA_ARGS org.apache.zookeeper.server.quorum.QuorumPeerMain "$@"
 diff --git a/bin/zookeeper-server-start.sh b/bin/zookeeper-server-start.sh
 deleted file mode 100755
-index 4287774..0000000
+index bd9c114..0000000
 --- a/bin/zookeeper-server-start.sh
 +++ /dev/null
 @@ -1,44 +0,0 @@
@@ -1703,9 +1859,9 @@ index 4287774..0000000
 -# The ASF licenses this file to You under the Apache License, Version 2.0
 -# (the "License"); you may not use this file except in compliance with
 -# the License.  You may obtain a copy of the License at
--# 
+-#
 -#    http://www.apache.org/licenses/LICENSE-2.0
--# 
+-#
 -# Unless required by applicable law or agreed to in writing, software
 -# distributed under the License is distributed on an "AS IS" BASIS,
 -# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -1727,7 +1883,7 @@ index 4287774..0000000
 -    export KAFKA_HEAP_OPTS="-Xmx512M -Xms512M"
 -fi
 -
--EXTRA_ARGS="-name zookeeper -loggc"
+-EXTRA_ARGS=${EXTRA_ARGS-'-name zookeeper -loggc'}
 -
 -COMMAND=$1
 -case $COMMAND in
